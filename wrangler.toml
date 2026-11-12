@@ -1,6 +1,6 @@
 name = "natexperience-preview"
 main = "frontdesk-proxy.js"
-compatibility_date = "2026-10-29"
+compatibility_date = "2026-04-17"
 
 [vars]
 FRONTDESK_ORIGIN = "https://replace-me.invalid"
