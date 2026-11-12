@@ -1,0 +1,54 @@
+:root {
+  --fd-starter-ink: #171827;
+  --fd-starter-paper: #fbfbff;
+  --fd-starter-muted: #6b7280;
+  --fd-starter-line: #e5e7eb;
+  --fd-starter-accent: #5b5ef7;
+  --fd-starter-radius: 12px;
+  --fd-starter-content-width: 1200px;
+}
+
+.fd-starter-container {
+  width: min(var(--fd-starter-content-width), calc(100% - 40px));
+  margin-inline: auto;
+}
+
+.fd-starter-heading {
+  color: var(--fd-starter-ink);
+  font-size: clamp(2rem, 5vw, 4.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.055em;
+}
+
+.fd-starter-card {
+  overflow: hidden;
+  border: 1px solid var(--fd-starter-line);
+  border-radius: var(--fd-starter-radius);
+  background: #fff;
+  color: var(--fd-starter-ink);
+}
+
+.fd-starter-button {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 20px;
+  background: #111827;
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.fd-starter-button:hover {
+  background: var(--fd-starter-accent);
+}
+
+.fd-starter-button:focus-visible {
+  outline: 3px solid var(--fd-starter-accent);
+  outline-offset: 3px;
+}

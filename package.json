@@ -1,0 +1,13 @@
+{
+  "name": "frontdesk-forge",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --local --port 8787 --live-reload",
+    "deploy:assets": "wrangler deploy --config wrangler.assets.toml",
+    "assets:urls": "bun run scripts/list-asset-urls.js"
+  },
+  "devDependencies": {
+    "wrangler": "^4.155.0"
+  }
+}

@@ -1,0 +1,12 @@
+name = "frontdesk-forge"
+main = "frontdesk-proxy.js"
+compatibility_date = "2026-10-29"
+
+[vars]
+FRONTDESK_ORIGIN = "https://starter.pv.pro"
+ASSET_CDN_ORIGIN = "https://replace-me.invalid"
+
+[assets]
+directory = "./exports"
+binding = "ASSETS"
+run_worker_first = true

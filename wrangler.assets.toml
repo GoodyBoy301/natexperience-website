@@ -1,0 +1,9 @@
+name = "frontdesk-forge-assets"
+main = "assets-cdn-worker.js"
+compatibility_date = "2026-10-29"
+workers_dev = true
+
+[assets]
+directory = "./exports/custom-assets"
+binding = "ASSETS"
+run_worker_first = true
