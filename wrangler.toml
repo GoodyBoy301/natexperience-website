@@ -3,7 +3,7 @@ main = "frontdesk-proxy.js"
 compatibility_date = "2026-04-17"
 
 [vars]
-FRONTDESK_ORIGIN = "https://replace-me.invalid"
+FRONTDESK_ORIGIN = "https://35b3b165f8a896133d-nat-experience.sme.live"
 ASSET_CDN_ORIGIN = "https://replace-me.invalid"
 
 [assets]
