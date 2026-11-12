@@ -1,9 +1,9 @@
-name = "frontdesk-forge"
+name = "natexperience-preview"
 main = "frontdesk-proxy.js"
 compatibility_date = "2026-10-29"
 
 [vars]
-FRONTDESK_ORIGIN = "https://starter.pv.pro"
+FRONTDESK_ORIGIN = "https://replace-me.invalid"
 ASSET_CDN_ORIGIN = "https://replace-me.invalid"
 
 [assets]
