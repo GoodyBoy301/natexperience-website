@@ -39,7 +39,7 @@
   left: 50%;
   width: 100vw;
   max-width: 100vw;
-  min-height: max(680px, calc(100svh - 80px));
+  height: 100%;
   transform: translateX(-50%);
   place-items: center;
   overflow: hidden;
@@ -162,9 +162,10 @@ if (hero) {
       if (!response.ok) throw new Error("Storefront request failed");
       return response.json();
     })
-    .then(({ data }) => {
+    .then((payload) => {
+      const events = payload.events ?? payload.data?.events;
       const now = Date.now();
-      const event = (Array.isArray(data?.events) ? data.events : [])
+      const event = (Array.isArray(events) ? events : [])
         .filter(
           (item) =>
             item.publishedAt &&

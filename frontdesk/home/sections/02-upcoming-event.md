@@ -173,9 +173,10 @@ if (section) {
       if (!response.ok) throw new Error("Event request failed");
       return response.json();
     })
-    .then(({ data }) => {
+    .then((payload) => {
+      const events = payload.events ?? payload.data?.events;
       const now = Date.now();
-      const event = (Array.isArray(data?.events) ? data.events : [])
+      const event = (Array.isArray(events) ? events : [])
         .filter(
           (item) =>
             item.publishedAt &&

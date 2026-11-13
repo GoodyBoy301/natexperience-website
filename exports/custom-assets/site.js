@@ -70,7 +70,8 @@
       menu.setAttribute("aria-hidden", "false");
       requestAnimationFrame(() => {
         const inner = menu.querySelector(".nat-nav-menu__inner");
-        const limit = window.innerHeight - 64;
+        const limit =
+          window.innerHeight - header.getBoundingClientRect().height;
         const targetHeight = Math.min(inner.scrollHeight, limit);
         menu.style.setProperty("--nat-nav-row-height", `${targetHeight}px`);
         header.dataset.navPanelHeight = String(targetHeight);
@@ -86,9 +87,10 @@
 
   document.addEventListener("pointerover", (event) => {
     if (event.pointerType === "touch") return;
-    window.clearTimeout(menuCloseTimer);
     const item = event.target.closest?.(".nat-nav-item");
-    if (item && !item.contains(event.relatedTarget)) setMenuOpen(item, true);
+    if (!item) return;
+    window.clearTimeout(menuCloseTimer);
+    if (!item.contains(event.relatedTarget)) setMenuOpen(item, true);
   });
   document.addEventListener("pointerout", (event) => {
     if (event.pointerType === "touch") return;
@@ -96,9 +98,7 @@
     if (!item || item.contains(event.relatedTarget)) return;
     window.clearTimeout(menuCloseTimer);
     menuCloseTimer = window.setTimeout(() => {
-      if (!item.matches(":hover") && !item.contains(document.activeElement)) {
-        setMenuOpen(item, false);
-      }
+      if (!item.matches(":hover")) setMenuOpen(item, false);
     }, 220);
   });
   document.addEventListener("focusin", (event) => {
@@ -159,10 +159,13 @@
     if (!menu?.closest(".nat-nav-item.is-open")) return;
     requestAnimationFrame(() => {
       const inner = menu.querySelector(".nat-nav-menu__inner");
-      const height = Math.min(inner.scrollHeight, window.innerHeight - 64);
+      const header = menu.closest(".nat-custom-header");
+      const height = Math.min(
+        inner.scrollHeight,
+        window.innerHeight - header.getBoundingClientRect().height,
+      );
       menu.style.setProperty("--nat-nav-row-height", `${height}px`);
-      menu.closest(".nat-custom-header").dataset.navPanelHeight =
-        String(height);
+      header.dataset.navPanelHeight = String(height);
     });
   };
 
@@ -249,7 +252,9 @@
     const section = document.querySelector(".nat-next[data-storefront-ref]");
     const hero = document.querySelector(".nat-hero[data-storefront-ref]");
     const storefrontRef =
-      section?.dataset.storefrontRef || hero?.dataset.storefrontRef;
+      section?.dataset.storefrontRef ||
+      hero?.dataset.storefrontRef ||
+      document.querySelector(".nat-custom-header")?.dataset.storefrontRef;
     if (
       !storefrontRef ||
       (section?.dataset.eventLoaded && hero?.dataset.eventLoaded)
@@ -271,10 +276,12 @@
       );
       if (!response.ok) throw new Error("FrontDesk event request failed");
 
-      const { data } = await response.json();
+      const payload = await response.json();
+      const { data } = payload;
+      const events = payload.events ?? data?.events;
 
       const now = Date.now();
-      const upcomingEvents = (Array.isArray(data?.events) ? data.events : [])
+      const upcomingEvents = (Array.isArray(events) ? events : [])
         .filter(
           (item) =>
             item.publishedAt &&
@@ -345,10 +352,13 @@
       "blockSections.hero.blocks.hero-headline.html",
       "Nights out for people who work all week.",
     );
-    setCopy(
-      "blockSections.hero.blocks.hero-subtitle.html",
-      "Lagos after-work parties for 9-to-5ers and young creatives. DJs, live music and room to connect.",
+    const heroSubtitle = document.querySelector(
+      '[data-edit-path="blockSections.hero.blocks.hero-subtitle.html"]',
     );
+    if (heroSubtitle) {
+      heroSubtitle.innerHTML =
+        "Lagos after-work parties for 9-to-5ers and young creatives.<br>DJs, live music and room to connect.";
+    }
     setCopy(
       "blockSections.hero.blocks.hero-buttons.buttons.hero-btn-browse.label",
       "Browse events",

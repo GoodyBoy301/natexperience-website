@@ -110,7 +110,11 @@
   min-width: 0;
 }
 .nat-newsletter {
+  display: flex;
+  height: 340px;
+  flex-direction: column;
   align-self: start;
+  margin-top: calc(clamp(2rem, 3.5vw, 3rem) + 60px);
   padding: clamp(24px, 3vw, 40px);
   border-radius: 9px;
   background: #fff4a6;
@@ -128,6 +132,9 @@
   margin: 16px 0 30px;
   color: rgb(23 23 23 / 76%);
   line-height: 1.55;
+}
+.nat-newsletter__signup {
+  margin-top: auto;
 }
 .nat-newsletter__signup label {
   display: block;
@@ -222,6 +229,10 @@
   .nat-newsletter-faq {
     grid-template-columns: 1fr;
     padding-inline: 24px;
+  }
+  .nat-newsletter {
+    height: auto;
+    margin-top: 0;
   }
 }
 @media (max-width: 520px) {
