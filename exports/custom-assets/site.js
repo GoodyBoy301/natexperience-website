@@ -256,12 +256,44 @@
   );
   let eventOpener;
 
+  const themeEventFrame = () => {
+    try {
+      const frameDocument = eventFrame.contentDocument;
+      if (
+        frameDocument?.head &&
+        !frameDocument.querySelector("[data-nat-event-theme]")
+      ) {
+        const style = frameDocument.createElement("style");
+        style.dataset.natEventTheme = "";
+        style.textContent = `
+          :root, body {
+            color-scheme: dark !important;
+            scrollbar-color: #50545e #111318 !important;
+            scrollbar-width: thin !important;
+          }
+          ::-webkit-scrollbar { width: 8px; height: 8px; }
+          ::-webkit-scrollbar-track { background: #111318; }
+          ::-webkit-scrollbar-thumb {
+            border: 2px solid #111318;
+            border-radius: 8px;
+            background: #50545e;
+          }
+        `;
+        frameDocument.head.append(style);
+      }
+    } catch {}
+    eventFrame.classList.add("is-ready");
+  };
+
+  eventFrame?.addEventListener("load", themeEventFrame);
+
   const openEventDrawer = (slug, title, opener) => {
     if (!eventDrawer || !eventFrame || !/^[a-z0-9-]+$/i.test(slug)) return;
     const url = new URL(`/events/${encodeURIComponent(slug)}`, location.origin);
     eventOpener = opener || document.activeElement;
     eventTitle.textContent = title || "Event details";
     eventFallback.href = url.href;
+    eventFrame.classList.remove("is-ready");
     eventFrame.src = url.href;
     if (!eventDrawer.open) eventDrawer.showModal();
   };
@@ -318,6 +350,7 @@
     if (event.target === eventDrawer) eventDrawer.close();
   });
   eventDrawer?.addEventListener("close", () => {
+    eventFrame.classList.remove("is-ready");
     eventFrame.src = "about:blank";
     eventOpener?.focus();
   });

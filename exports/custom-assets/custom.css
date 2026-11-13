@@ -1627,7 +1627,13 @@ body.nat-site {
   min-height: 0;
   flex: 1;
   border: 0;
-  background: #fff;
+  background: #0d0f14;
+  color-scheme: dark;
+  visibility: hidden;
+}
+
+.nat-event-drawer iframe.is-ready {
+  visibility: visible;
 }
 
 .nat-event-drawer__fallback {
