@@ -1,4 +1,5 @@
 node_modules/
+exports/custom-assets/local-sections.html
 .nuxt/
 .output/
 dist/

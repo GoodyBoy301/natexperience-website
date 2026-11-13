@@ -4,7 +4,7 @@ compatibility_date = "2026-04-17"
 
 [vars]
 FRONTDESK_ORIGIN = "https://35b3b165f8a896133d-nat-experience.sme.live"
-ASSET_CDN_ORIGIN = "https://replace-me.invalid"
+ASSET_CDN_ORIGIN = "https://natexperience-assets.goodyboy-work.workers.dev"
 
 [assets]
 directory = "./exports"

@@ -1,0 +1,524 @@
+(() => {
+  const shell = {
+    header: document.querySelector(".nat-custom-header")?.outerHTML,
+    footer: document.querySelector(".nat-custom-footer")?.outerHTML,
+  };
+
+  const ensureShell = () => {
+    document
+      .querySelectorAll("[data-frontdesk-widget]")
+      .forEach((widget) => widget.remove());
+
+    if (shell.header && !document.querySelector(".nat-custom-header")) {
+      document.body.insertAdjacentHTML("afterbegin", shell.header);
+    }
+    if (shell.footer && !document.querySelector(".nat-custom-footer")) {
+      document.body.insertAdjacentHTML("beforeend", shell.footer);
+    }
+  };
+
+  const observeShell = () => {
+    ensureShell();
+    new MutationObserver(ensureShell).observe(document.body, {
+      childList: true,
+      subtree: true,
+    });
+  };
+
+  observeShell();
+
+  let menuCloseTimer;
+
+  const closeMenus = (except) => {
+    document.querySelectorAll(".nat-nav-item.is-open").forEach((item) => {
+      if (item === except) return;
+      const menu = item.querySelector(".nat-nav-menu");
+      const header = item.closest(".nat-custom-header");
+      if (menu) {
+        header.dataset.navPanelHeight = String(
+          menu.getBoundingClientRect().height,
+        );
+        menu.style.setProperty("--nat-nav-row-height", "0px");
+        menu.inert = true;
+        menu.setAttribute("aria-hidden", "true");
+      }
+      item.classList.remove("is-open");
+      item
+        .querySelector("button[aria-expanded]")
+        ?.setAttribute("aria-expanded", "false");
+    });
+  };
+
+  const setMenuOpen = (item, open) => {
+    if (!item) return;
+    const menu = item.querySelector(".nat-nav-menu");
+    const header = item.closest(".nat-custom-header");
+    if (open && item.classList.contains("is-open")) return;
+
+    if (open && menu) {
+      const activeMenu = document.querySelector(
+        ".nat-nav-item.is-open > .nat-nav-menu",
+      );
+      const startHeight =
+        activeMenu?.getBoundingClientRect().height ||
+        Number(header.dataset.navPanelHeight) ||
+        0;
+      closeMenus(item);
+      menu.style.setProperty("--nat-nav-row-height", `${startHeight}px`);
+      item.classList.add("is-open");
+      menu.inert = false;
+      menu.setAttribute("aria-hidden", "false");
+      requestAnimationFrame(() => {
+        const inner = menu.querySelector(".nat-nav-menu__inner");
+        const limit = window.innerHeight - 64;
+        const targetHeight = Math.min(inner.scrollHeight, limit);
+        menu.style.setProperty("--nat-nav-row-height", `${targetHeight}px`);
+        header.dataset.navPanelHeight = String(targetHeight);
+      });
+    } else {
+      closeMenus();
+    }
+
+    item
+      .querySelector("button[aria-expanded]")
+      ?.setAttribute("aria-expanded", String(open));
+  };
+
+  document.addEventListener("pointerover", (event) => {
+    if (event.pointerType === "touch") return;
+    window.clearTimeout(menuCloseTimer);
+    const item = event.target.closest?.(".nat-nav-item");
+    if (item && !item.contains(event.relatedTarget)) setMenuOpen(item, true);
+  });
+  document.addEventListener("pointerout", (event) => {
+    if (event.pointerType === "touch") return;
+    const item = event.target.closest?.(".nat-nav-item");
+    if (!item || item.contains(event.relatedTarget)) return;
+    window.clearTimeout(menuCloseTimer);
+    menuCloseTimer = window.setTimeout(() => {
+      if (!item.matches(":hover") && !item.contains(document.activeElement)) {
+        setMenuOpen(item, false);
+      }
+    }, 220);
+  });
+  document.addEventListener("focusin", (event) => {
+    const item = event.target.closest?.(".nat-nav-item");
+    if (item) setMenuOpen(item, true);
+  });
+  document.addEventListener("focusout", (event) => {
+    const item = event.target.closest?.(".nat-nav-item");
+    if (item && !item.contains(event.relatedTarget)) setMenuOpen(item, false);
+  });
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest?.(".nat-nav-item > button");
+    if (button) {
+      const item = button.closest(".nat-nav-item");
+      const shouldOpen = window.matchMedia("(hover: hover)").matches
+        ? true
+        : button.getAttribute("aria-expanded") !== "true";
+      setMenuOpen(item, shouldOpen);
+    } else if (!event.target.closest?.(".nat-custom-header")) {
+      closeMenus();
+    }
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    const openItem = document.querySelector(".nat-nav-item.is-open");
+    if (!openItem) return;
+    setMenuOpen(openItem, false);
+    openItem.querySelector("button")?.focus();
+  });
+
+  const setCopy = (path, value) => {
+    const element = document.querySelector(`[data-edit-path="${path}"]`);
+    if (element) element.textContent = value;
+  };
+
+  const updateCountdowns = () => {
+    document
+      .querySelectorAll(".nat-countdown[data-countdown-target]")
+      .forEach((countdown) => {
+        const target = Date.parse(countdown.dataset.countdownTarget);
+        if (!Number.isFinite(target)) return;
+
+        const remaining = Math.max(0, target - Date.now());
+        const values = {
+          days: Math.floor(remaining / 86400000),
+          hours: Math.floor((remaining / 3600000) % 24),
+          minutes: Math.floor((remaining / 60000) % 60),
+          seconds: Math.floor((remaining / 1000) % 60),
+        };
+        Object.entries(values).forEach(([unit, value]) => {
+          const output = countdown.querySelector(`[data-countdown-${unit}]`);
+          if (output) output.textContent = String(value).padStart(2, "0");
+        });
+      });
+  };
+
+  const resizeOpenMenu = (menu) => {
+    if (!menu?.closest(".nat-nav-item.is-open")) return;
+    requestAnimationFrame(() => {
+      const inner = menu.querySelector(".nat-nav-menu__inner");
+      const height = Math.min(inner.scrollHeight, window.innerHeight - 64);
+      menu.style.setProperty("--nat-nav-row-height", `${height}px`);
+      menu.closest(".nat-custom-header").dataset.navPanelHeight =
+        String(height);
+    });
+  };
+
+  const renderUpcomingEvents = (events, timezone) => {
+    const list = document.querySelector("[data-upcoming-events]");
+    if (!list) return;
+
+    list.replaceChildren();
+    if (!events.length) {
+      const status = document.createElement("p");
+      status.className = "nat-menu-status";
+      status.textContent = "No upcoming events announced yet.";
+      list.append(status);
+      resizeOpenMenu(list.closest(".nat-nav-menu"));
+      return;
+    }
+
+    events.slice(0, 3).forEach((event) => {
+      const card = document.createElement("a");
+      card.className = "nat-menu-card nat-menu-card--event";
+      card.href = `/events/${encodeURIComponent(event.slug)}`;
+      const title = document.createElement("strong");
+      title.textContent = event.title;
+      const date = document.createElement("time");
+      date.dateTime = event.startAt;
+      date.textContent = new Intl.DateTimeFormat("en-NG", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        timeZone: event.timezone || timezone || "UTC",
+      }).format(new Date(event.startAt));
+      const action = document.createElement("span");
+      action.className = "nat-event-row__action";
+      const actionLabel = document.createElement("b");
+      actionLabel.textContent = "View event";
+      action.append(actionLabel);
+      card.append(date, title, action);
+      list.append(card);
+    });
+    resizeOpenMenu(list.closest(".nat-nav-menu"));
+  };
+
+  const renderEventArchive = (events, timezone) => {
+    const list = document.querySelector("[data-upcoming-event-list]");
+    if (!list) return;
+
+    list.replaceChildren();
+    if (!events.length) {
+      const empty = document.createElement("li");
+      empty.className = "nat-events__empty";
+      empty.textContent = "No upcoming events announced yet.";
+      list.append(empty);
+      return;
+    }
+
+    events.forEach((event) => {
+      const item = document.createElement("li");
+      const row = document.createElement("a");
+      row.className = "nat-events__row nat-events__row--upcoming";
+      row.href = `/events/${encodeURIComponent(event.slug)}`;
+
+      const date = document.createElement("time");
+      date.dateTime = event.startAt;
+      date.textContent = new Intl.DateTimeFormat("en-NG", {
+        weekday: "short",
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        timeZone: event.timezone || timezone || "UTC",
+      }).format(new Date(event.startAt));
+
+      const title = document.createElement("strong");
+      title.textContent = event.title;
+      const action = document.createElement("span");
+      action.textContent = "View event";
+      row.append(date, title, action);
+      item.append(row);
+      list.append(item);
+    });
+  };
+
+  const loadNextEvent = async () => {
+    const section = document.querySelector(".nat-next[data-storefront-ref]");
+    const hero = document.querySelector(".nat-hero[data-storefront-ref]");
+    const storefrontRef =
+      section?.dataset.storefrontRef || hero?.dataset.storefrontRef;
+    if (
+      !storefrontRef ||
+      (section?.dataset.eventLoaded && hero?.dataset.eventLoaded)
+    )
+      return;
+
+    if (section) section.dataset.eventLoaded = "true";
+    if (hero) hero.dataset.eventLoaded = "true";
+    const countdown = section?.querySelector(".nat-countdown");
+    const name = section?.querySelector("#nat-next-title");
+    const link = section?.querySelector("a");
+
+    const heroLink = hero?.querySelector("[data-next-event-link]");
+
+    try {
+      const response = await fetch(
+        `https://api.frontdesk.africa/v1/storefront/${encodeURIComponent(storefrontRef)}`,
+        { headers: { Accept: "application/json" }, cache: "no-store" },
+      );
+      if (!response.ok) throw new Error("FrontDesk event request failed");
+
+      const { data } = await response.json();
+
+      const now = Date.now();
+      const upcomingEvents = (Array.isArray(data?.events) ? data.events : [])
+        .filter(
+          (item) =>
+            item.publishedAt &&
+            item.title &&
+            item.slug &&
+            Number.isFinite(Date.parse(item.startAt)) &&
+            Date.parse(item.startAt) > now,
+        )
+        .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt));
+      renderUpcomingEvents(upcomingEvents, data.timezone);
+      renderEventArchive(upcomingEvents, data.timezone);
+      const event = upcomingEvents[0];
+
+      if (!event) {
+        if (name) name.textContent = "NO UPCOMING EVENT ANNOUNCED";
+        return;
+      }
+
+      const eventUrl = `/events/${encodeURIComponent(event.slug)}`;
+      if (name && countdown && link) {
+        name.textContent = `UNTIL ${event.title}`;
+        countdown.dataset.countdownTarget = event.startAt;
+        countdown.hidden = false;
+        countdown.setAttribute("aria-label", `Countdown to ${event.title}`);
+        link.href = eventUrl;
+        link.hidden = false;
+        updateCountdowns();
+      }
+      if (heroLink) heroLink.href = eventUrl;
+    } catch {
+      if (name) name.textContent = "EVENT DETAILS UNAVAILABLE";
+    }
+  };
+
+  updateCountdowns();
+  window.setInterval(updateCountdowns, 1000);
+
+  const placeNewsletterFaq = () => {
+    const section = document.querySelector(".nat-newsletter-faq");
+    if (!section) return;
+
+    const store = document.querySelector("#store");
+    const faq = document.querySelector("#faq");
+    if (store && section.previousElementSibling !== store) {
+      store.insertAdjacentElement("afterend", section);
+    }
+    faq?.classList.add("nat-faq-hidden");
+  };
+
+  const enhanceStorefront = () => {
+    if (document.body.dataset.natEnhanced) return;
+
+    const hero = document.querySelector("#hero");
+    const store = document.querySelector("#store");
+    const faq = document.querySelector("#faq");
+    const footer = document.querySelector('[data-sf-part="footer"]');
+
+    document.body.dataset.natEnhanced = "true";
+    document.body.classList.add("nat-site");
+
+    if (!hero || !store || !faq) {
+      renderCustomSections();
+      return;
+    }
+    if (!footer) return;
+
+    setCopy(
+      "blockSections.hero.blocks.hero-headline.html",
+      "Nights out for people who work all week.",
+    );
+    setCopy(
+      "blockSections.hero.blocks.hero-subtitle.html",
+      "Lagos after-work parties for 9-to-5ers and young creatives. DJs, live music and room to connect.",
+    );
+    setCopy(
+      "blockSections.hero.blocks.hero-buttons.buttons.hero-btn-browse.label",
+      "Browse events",
+    );
+
+    setCopy("section.store.heading", "Choose your night");
+    setCopy(
+      "section.store.intro",
+      "Book an experience or get in touch about a private event.",
+    );
+
+    setCopy("footer.brandText", "NATExperience");
+    setCopy(
+      "footer.tagline",
+      "Lagos parties, live shows and event management.",
+    );
+
+    hero.insertAdjacentHTML(
+      "afterend",
+      `
+      <section class="nat-section nat-about" id="about" aria-label="NATExperience event formats">
+        <article class="nat-about__item">
+          <img class="nat-about__image" src="https://natexperience-assets.goodyboy-work.workers.dev/after-work-parties.jpg" alt="A performer sings into a microphone at an after-work party" />
+          <div class="nat-about__copy"><span class="nat-about__label">After-work parties</span><h2>When the workday wraps, step into a night of music, dancing, and good company.</h2><span class="nat-about__detail">9-5 block parties</span></div>
+        </article>
+        <article class="nat-about__item nat-about__item--reverse">
+          <img class="nat-about__image" src="https://natexperience-assets.goodyboy-work.workers.dev/pool-parties.jpg" alt="A guest dancing at a party in a red hat and sunglasses" />
+          <div class="nat-about__copy"><span class="nat-about__label">Pool parties</span><h2>Make the most of the sunshine with refreshing poolside parties, great music, and your favorite people.</h2><span class="nat-about__detail">DJs, music and a change of scene</span></div>
+        </article>
+        <article class="nat-about__item">
+          <img class="nat-about__image" src="https://natexperience-assets.goodyboy-work.workers.dev/all-white-parties.jpg" alt="Guests celebrating together at an all-white party" />
+          <div class="nat-about__copy"><span class="nat-about__label">All-white parties</span><h2>Show up in your best white, find your people, and dance together long after sunset.</h2><span class="nat-about__detail">Music, DJs and room to connect</span></div>
+        </article>
+      </section>
+      <section class="nat-section nat-events" id="events" aria-labelledby="nat-events-title">
+        <h2 id="nat-events-title">Our Events</h2>
+        <div class="nat-events__group">
+          <h3>Upcoming</h3>
+          <ol class="nat-events__list" data-upcoming-event-list aria-live="polite"><li class="nat-events__empty">Loading upcoming events…</li></ol>
+        </div>
+        <div class="nat-events__group">
+          <h3>Past</h3>
+          <ol class="nat-events__list">
+            <li><a class="nat-events__row nat-events__row--past" href="https://www.youtube.com/results?search_query=NATExperience+Hysteria+Y2K+Party" target="_blank" rel="noreferrer"><time datetime="2025-11-15">Sat, 15 Nov 2025</time><strong>Hysteria Y2K Party</strong><span>Watch on YouTube</span></a></li>
+            <li><a class="nat-events__row nat-events__row--past" href="https://www.youtube.com/results?search_query=NATExperience+9-5+Block+Party" target="_blank" rel="noreferrer"><time datetime="2025-08-23">Sat, 23 Aug 2025</time><strong>9–5 Block Party</strong><span>Watch on YouTube</span></a></li>
+            <li><a class="nat-events__row nat-events__row--past" href="https://www.youtube.com/results?search_query=NATExperience+Eko+for+Show" target="_blank" rel="noreferrer"><time datetime="2025-05-17">Sat, 17 May 2025</time><strong>Eko for Show</strong><span>Watch on YouTube</span></a></li>
+            <li><a class="nat-events__row nat-events__row--past" href="https://www.youtube.com/results?search_query=NATExperience+Poolside+Party" target="_blank" rel="noreferrer"><time datetime="2025-02-08">Sat, 08 Feb 2025</time><strong>Poolside Sessions</strong><span>Watch on YouTube</span></a></li>
+          </ol>
+        </div>
+      </section>
+      <section class="nat-newsletter-faq" id="newsletter-faq" aria-label="Newsletter and frequently asked questions">
+        <div class="nat-newsletter">
+          <h2 id="nat-newsletter-title">Stay in the loop.</h2>
+          <p>Be first to hear about upcoming parties, ticket drops, and new experiences.</p>
+          <div class="nat-newsletter__signup">
+            <label for="nat-newsletter-email">Email address</label>
+            <div class="nat-newsletter__controls">
+              <input id="nat-newsletter-email" type="email" placeholder="Your email address" autocomplete="email" disabled aria-describedby="nat-newsletter-note" />
+              <button type="button" disabled>Subscribe</button>
+            </div>
+            <p id="nat-newsletter-note">Sign-up functionality coming soon.</p>
+          </div>
+        </div>
+        <div class="nat-faq-column">
+          <h2 id="nat-faq-title">FAQs</h2>
+          <p class="nat-faq-intro">Dates, venues, music and tickets—what to know before you go.</p>
+          <details class="nat-faq-card"><summary>What kinds of parties does NATExperience host?</summary><p>We specialize in high-energy private group experiences like after-work 9–5 events, all-white parties, and pool parties. Every event features music, DJs, and a lively atmosphere designed to bring people together.</p></details>
+          <details class="nat-faq-card"><summary>Can I book NATExperience for a private birthday party?</summary><p>Yes, we love hosting birthdays. Our pool party setups include fun touches like floats and birthday signs, and we can tailor the vibe to your group.</p></details>
+          <details class="nat-faq-card"><summary>Do you provide a DJ and music?</summary><p>Absolutely. Music and DJs are core to every NATExperience event. We handle the sound so you can focus on enjoying the night.</p></details>
+          <details class="nat-faq-card"><summary>How much does it cost to book an event?</summary><p>Pricing depends on the event type, group size, and any custom options you want. Contact us with your party details and we will give you a tailored quote.</p></details>
+          <details class="nat-faq-card"><summary>How do I book an event with NATExperience?</summary><p>Reach out through our website or contact channels and tell us your event date, group size, and preferred vibe. We will get back to you with next steps and availability.</p></details>
+        </div>
+      </section>
+    `,
+    );
+
+    document.querySelector(".nat-about").insertAdjacentHTML(
+      "afterend",
+      `
+      <section class="nat-next" id="next-event" data-storefront-ref="01a1cf12-cd3f-72b5-b752-ea33209a16b8" aria-labelledby="nat-next-title">
+        <div class="nat-next__content">
+          <div class="nat-countdown" aria-label="Countdown to the next event" hidden>
+            <div><strong data-countdown-days>--</strong><span>Days</span></div>
+            <div><strong data-countdown-hours>--</strong><span>Hours</span></div>
+            <div><strong data-countdown-minutes>--</strong><span>Minutes</span></div>
+            <div><strong data-countdown-seconds>--</strong><span>Seconds</span></div>
+          </div>
+          <p id="nat-next-title">Loading the next event…</p>
+          <a href="#" target="_top" hidden>Get your ticket</a>
+        </div>
+      </section>
+
+    `,
+    );
+    placeNewsletterFaq();
+    loadNextEvent();
+  };
+
+  const renderCustomSections = () => {
+    const slots = Array.from(
+      document.querySelectorAll('[data-sf-section^="custom_html-"]'),
+    );
+    const sections = window.__natPreviewSections || [];
+    if (!sections.length) return;
+    const hero = sections.find((content) =>
+      content.includes('class="nat-hero'),
+    );
+    const contentSections = sections.filter((content) => content !== hero);
+
+    if (slots.length >= contentSections.length) {
+      if (hero && !document.querySelector(".nat-hero")) {
+        slots[0].insertAdjacentHTML("beforebegin", hero);
+      }
+      contentSections.forEach((content, index) => {
+        slots[index].innerHTML = content;
+      });
+      placeNewsletterFaq();
+      loadNextEvent();
+      return;
+    }
+    if (slots.length) return;
+
+    const main = document.querySelector("main");
+    if (!main || main.querySelector("[data-nat-preview-sections]")) return;
+
+    const group = document.createElement("div");
+    group.dataset.natPreviewSections = "";
+    group.style.display = "contents";
+    group.innerHTML = sections.join("");
+    const footer = main.querySelector('[data-sf-part="footer"]');
+    main.insertBefore(group, footer || null);
+    placeNewsletterFaq();
+    loadNextEvent();
+  };
+
+  const restoreSections = () => {
+    const sections = window.__natPreviewSections || [];
+    if (!sections.length) return;
+
+    const hero = sections.find((content) =>
+      content.includes('class="nat-hero'),
+    );
+    const contentSectionCount = sections.length - Number(Boolean(hero));
+    const slots = Array.from(
+      document.querySelectorAll('[data-sf-section^="custom_html-"]'),
+    );
+    const requiredSections = [
+      ".nat-about",
+      ".nat-next",
+      ".nat-events",
+      ".nat-newsletter-faq",
+    ];
+    const sectionsMissing =
+      requiredSections.some((selector) => !document.querySelector(selector)) ||
+      (hero && !document.querySelector(".nat-hero"));
+
+    if (
+      (slots.length >= contentSectionCount && sectionsMissing) ||
+      (!slots.length && !document.querySelector("[data-nat-preview-sections]"))
+    ) {
+      renderCustomSections();
+    }
+  };
+
+  new MutationObserver(restoreSections).observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
+  window.setTimeout(() => {
+    enhanceStorefront();
+    restoreSections();
+  }, 1200);
+})();

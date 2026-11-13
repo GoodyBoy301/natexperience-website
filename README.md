@@ -22,7 +22,7 @@ The `Preview tools` button appears on local pages and reports the storefront, as
 - `exports/body-end.html` is inserted before `</body>` on HTML pages.
 - `exports/custom-assets/` contains styles, scripts, images, and other local assets.
 
-The starter CSS tokens and classes in `custom.css` are opt-in. Inspect the target storefront DOM before writing page-specific selectors or behavior.
+`custom.css` contains the red, black, and white homepage styling. `site.js` adds the marketing sections around the native FrontDesk store, FAQ, and checkout flows. Keep storefront-owned booking behavior in the native page; use `exports/` for the visual layer and added content.
 
 ## Publish assets to Cloudflare
 
@@ -39,6 +39,12 @@ bun run assets:urls -- https://natexperience-assets.ACCOUNT_SUBDOMAIN.workers.de
 ```
 
 Set `ASSET_CDN_ORIGIN` in `wrangler.toml` to the deployed origin. During local preview, CDN references are rewritten to the matching local assets so edits appear without re-uploading. Rename an asset or add a query version to invalidate a cached URL.
+
+## FrontDesk section exports
+
+`frontdesk/home/sections/` contains seven independent Custom HTML sections, including a cinematic custom hero followed by six content sections. Each Markdown file has complete `html`, `css`, and `js` blocks so it can be copied into a FrontDesk section without relying on the proxy's shared stylesheet or JavaScript. Keep native event products, checkout, and FAQ sections native; place the custom sections around them as needed. The local preview generates `exports/custom-assets/local-sections.html` from these Markdown files before Wrangler starts, so the section files remain the single editable source of truth.
+
+Suggested order: Hero, About, Upcoming Event, Past Editions, Experience, Event Formats, Event Management. The hero and upcoming-event sections use the storefront's public FrontDesk data: the hero displays its configured background image and the date and ticket link for the nearest future published event, while the upcoming-event section also builds a countdown from that event. Assign the native booking products and FAQ after Event Management if that matches the live page layout. Replace the About image with an approved NATExperience photo before publishing.
 
 ## Debugging
 

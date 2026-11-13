@@ -25,43 +25,74 @@ function rewriteAssetReferences(source, cdnOrigin, localOrigin) {
     .join(`${localOrigin}/custom-assets`);
 }
 
+function textResponse(source, headers, status = 200, statusText) {
+  headers.delete("content-length");
+  headers.delete("content-encoding");
+  headers.set("content-encoding", "identity");
+  return new Response(source, { status, statusText, headers });
+}
+
+function addNatSiteClass(html) {
+  return html.replace(/<body\b([^>]*)>/i, (tag, attributes) => {
+    if (/\bclass="[^"]*"/.test(attributes)) {
+      return tag.replace(/class="([^"]*)"/, 'class="$1 nat-site"');
+    }
+    return `<body${attributes} class="nat-site">`;
+  });
+}
+
 async function injectCustomMarkup(response, env, localOrigin) {
   if (!response.headers.get("content-type")?.includes("text/html")) {
     return response;
   }
 
-  const [headResponse, bodyResponse] = await Promise.all([
-    env.ASSETS.fetch(new Request("https://assets/head.html")),
-    env.ASSETS.fetch(new Request("https://assets/body-end.html")),
-  ]);
+  const [headResponse, bodyResponse, sectionsResponse, cssResponse] =
+    await Promise.all([
+      env.ASSETS.fetch(new Request("https://assets/head.html")),
+      env.ASSETS.fetch(new Request("https://assets/body-end.html")),
+      env.ASSETS.fetch(
+        new Request("https://assets/custom-assets/local-sections.html"),
+      ),
+      env.ASSETS.fetch(new Request("https://assets/custom-assets/custom.css")),
+    ]);
   const cdnOrigin = env.ASSET_CDN_ORIGIN?.replace(/\/$/, "");
+  const customCss = cssResponse.ok
+    ? rewriteAssetReferences(await cssResponse.text(), cdnOrigin, localOrigin)
+    : "";
   const headMarkup = headResponse.ok
-    ? rewriteAssetReferences(await headResponse.text(), cdnOrigin, localOrigin)
+    ? rewriteAssetReferences(
+        await headResponse.text(),
+        cdnOrigin,
+        localOrigin,
+      ).replace(
+        /<link rel="stylesheet" href="\/custom-assets\/custom\.css"\s*\/>/,
+        `<style>${customCss}</style>`,
+      )
     : "";
-  const bodyMarkup = bodyResponse.ok
-    ? rewriteAssetReferences(await bodyResponse.text(), cdnOrigin, localOrigin)
+  const bodyMarkup = bodyResponse.ok ? await bodyResponse.text() : "";
+  const localSections = sectionsResponse.ok
+    ? await sectionsResponse.text()
     : "";
-  if (!headMarkup && !bodyMarkup) return response;
+  if (!headMarkup && !bodyMarkup && !localSections) return response;
 
-  const html = await response.text();
-  const withHead = headMarkup
-    ? html.replace(/<\/head\s*>/i, `${headMarkup}</head>`)
-    : html;
+  const sections = [
+    ...localSections.matchAll(/<template[^>]*>([\s\S]*?)<\/template>/g),
+  ].map((match) => match[1].trim());
+  const sectionsScript = `<script>window.__natPreviewSections=${JSON.stringify(sections)};</script>`;
+  const html = addNatSiteClass(await response.text());
+  const withHead =
+    headMarkup || sections.length
+      ? html.replace(/<\/head\s*>/i, `${headMarkup}${sectionsScript}</head>`)
+      : html;
   const output = bodyMarkup
     ? withHead.replace(/<\/body\s*>/i, `${bodyMarkup}</body>`)
     : withHead;
   const headers = new Headers(response.headers);
-  headers.delete("content-length");
-  headers.delete("content-encoding");
   headers.delete("content-security-policy");
   headers.delete("content-security-policy-report-only");
   rewriteCookies(headers);
 
-  return new Response(output, {
-    status: response.status,
-    statusText: response.statusText,
-    headers,
-  });
+  return textResponse(output, headers, response.status, response.statusText);
 }
 
 export default {
@@ -114,13 +145,12 @@ export default {
         incoming.origin,
       );
       const headers = new Headers(response.headers);
-      headers.delete("content-length");
-      headers.delete("content-encoding");
-      return new Response(source, {
-        status: response.status,
-        statusText: response.statusText,
+      return textResponse(
+        source,
         headers,
-      });
+        response.status,
+        response.statusText,
+      );
     }
 
     const localOrigin = incoming.origin;
