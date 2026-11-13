@@ -379,11 +379,21 @@
     eventOpener?.focus();
   });
 
+  const eventFrames = new WeakSet();
+  const requestEvents = (frame) => {
+    frame.contentWindow?.postMessage({ type: "nat:request-events" }, "*");
+  };
   const loadNextEvent = () => {
     document.querySelectorAll("iframe").forEach((frame) => {
-      frame.contentWindow?.postMessage({ type: "nat:request-events" }, "*");
+      if (!eventFrames.has(frame)) {
+        eventFrames.add(frame);
+        frame.addEventListener("load", () => requestEvents(frame));
+      }
+      requestEvents(frame);
     });
   };
+
+  loadNextEvent();
 
   updateCountdowns();
   window.setInterval(updateCountdowns, 1000);

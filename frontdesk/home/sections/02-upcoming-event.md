@@ -54,9 +54,10 @@
   width: min(100%, 1120px);
 }
 .nat-countdown {
+  --nat-countdown-gap: 2rem;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(10px, 2vw, 34px);
+  gap: var(--nat-countdown-gap);
   padding-bottom: 34px;
   border-bottom: 1px solid rgb(255 255 255 / 24%);
   font-variant-numeric: tabular-nums;
@@ -81,7 +82,7 @@
 .nat-countdown > div:not(:last-child)::after {
   position: absolute;
   top: 0;
-  right: calc(clamp(10px, 2vw, 34px) / -2);
+  right: calc(var(--nat-countdown-gap) / -2);
   transform: translateX(50%);
   font-family: "Oswald", "Arial Narrow", sans-serif;
   font-size: 11vw;
@@ -122,14 +123,15 @@
     padding-inline: 7%;
   }
   .nat-countdown {
+    --nat-countdown-gap: 0.75rem;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 34px 12px;
+    gap: 2.125rem var(--nat-countdown-gap);
   }
   .nat-countdown > div:nth-child(2)::after {
     display: none;
   }
   .nat-countdown > div:not(:last-child)::after {
-    right: -6px;
+    right: calc(var(--nat-countdown-gap) / -2);
     font-size: clamp(3rem, 16vw, 6rem);
   }
   .nat-countdown strong {
