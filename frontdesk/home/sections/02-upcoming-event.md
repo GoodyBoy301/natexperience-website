@@ -175,46 +175,50 @@ if (section) {
     });
   };
 
-  fetch(
-    `https://api.frontdesk.africa/v1/storefront/${encodeURIComponent(section.dataset.storefrontRef)}`,
-    {
-      headers: { Accept: "application/json" },
-      cache: "no-store",
-    },
-  )
-    .then((response) => {
-      if (!response.ok) throw new Error("Event request failed");
-      return response.json();
-    })
-    .then((payload) => {
-      const events = payload.events ?? payload.data?.events;
-      const now = Date.now();
-      const event = (Array.isArray(events) ? events : [])
-        .filter(
-          (item) =>
-            item.publishedAt &&
-            item.title &&
-            item.slug &&
-            Number.isFinite(Date.parse(item.startAt)) &&
-            Date.parse(item.startAt) > now,
-        )
-        .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt))[0];
-      if (!event) {
-        name.textContent = "NO UPCOMING EVENT ANNOUNCED";
+  const getUpcomingEvents = () =>
+    (Array.isArray(window.FD?.events) ? window.FD.events : [])
+      .filter(
+        (event) =>
+          event.title &&
+          event.slug &&
+          !/(?:\btest\b|do not buy)/i.test(event.title) &&
+          Number.isFinite(Date.parse(event.startAt)) &&
+          Date.parse(event.startAt) > Date.now(),
+      )
+      .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt));
 
-        return;
-      }
+  const publishEvents = () => {
+    const events = getUpcomingEvents();
+    window.parent.postMessage(
+      {
+        type: "nat:event-data",
+        timezone: "Africa/Lagos",
+        events: events.map(({ slug, title, startAt }) => ({
+          slug,
+          title,
+          startAt,
+          timezone: "Africa/Lagos",
+        })),
+      },
+      "*",
+    );
+    const event = events[0];
+    if (!event) {
+      name.textContent = "NO UPCOMING EVENT ANNOUNCED";
+      return;
+    }
+    name.textContent = `UNTIL ${event.title}`;
+    countdown.dataset.countdownTarget = event.startAt;
+    countdown.hidden = false;
+    link.href = `/events/${encodeURIComponent(event.slug)}`;
+    link.hidden = false;
+    update();
+    window.setInterval(update, 1000);
+  };
 
-      name.textContent = `UNTIL ${event.title}`;
-      countdown.dataset.countdownTarget = event.startAt;
-      countdown.hidden = false;
-      link.href = `/events/${encodeURIComponent(event.slug)}`;
-      link.hidden = false;
-      update();
-      window.setInterval(update, 1000);
-    })
-    .catch(() => {
-      name.textContent = "EVENT DETAILS UNAVAILABLE";
-    });
+  window.addEventListener("message", (event) => {
+    if (event.data?.type === "nat:request-events") publishEvents();
+  });
+  publishEvents();
 }
 ```

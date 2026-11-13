@@ -39,9 +39,9 @@ body.nat-site {
   overflow-x: clip;
 }
 
-.nat-site [data-sf-part="header"],
-.nat-site [data-sf-part="footer"],
-.nat-site [data-frontdesk-widget] {
+[data-sf-part="header"],
+[data-sf-part="footer"],
+[data-frontdesk-widget] {
   display: none !important;
 }
 
@@ -81,7 +81,7 @@ body.nat-site {
 
 .nat-custom-header__brand img {
   display: block;
-  width: 140px;
+  width: 120px;
   height: auto;
 }
 
@@ -478,21 +478,19 @@ body.nat-site {
 }
 
 .nat-custom-footer__kicker {
-  margin-bottom: 20px;
-  font-size: clamp(1rem, 2vw, 1.5rem);
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: 0.18em;
+  margin-bottom: 14px;
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  line-height: 0.85;
 }
 
 .nat-custom-footer__wordmark {
   position: relative;
-  max-width: 100%;
   white-space: nowrap;
-  font-size: clamp(2rem, 8vw, 7rem);
+  font-size: clamp(2rem, 12.5vw, 12rem);
   font-weight: 800;
-  line-height: 0.95;
-  letter-spacing: -0.045em;
+  line-height: 0.82;
+  letter-spacing: -0.065em;
   color: #fff;
   text-align: center;
   -webkit-text-stroke: 1px #fff;
@@ -1365,7 +1363,7 @@ body.nat-site {
   }
 
   .nat-custom-header__brand img {
-    width: 110px;
+    width: 120px;
   }
 
   .nat-custom-header__nav {

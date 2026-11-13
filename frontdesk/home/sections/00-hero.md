@@ -165,35 +165,41 @@ if (hero) {
     );
   });
 
-  fetch(
-    `https://api.frontdesk.africa/v1/storefront/${encodeURIComponent(hero.dataset.storefrontRef)}`,
-    {
-      headers: { Accept: "application/json" },
-      cache: "no-store",
-    },
-  )
-    .then((response) => {
-      if (!response.ok) throw new Error("Storefront request failed");
-      return response.json();
-    })
-    .then((payload) => {
-      const events = payload.events ?? payload.data?.events;
-      const now = Date.now();
-      const event = (Array.isArray(events) ? events : [])
-        .filter(
-          (item) =>
-            item.publishedAt &&
-            item.title &&
-            item.slug &&
-            Number.isFinite(Date.parse(item.startAt)) &&
-            Date.parse(item.startAt) > now,
-        )
-        .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt))[0];
-      if (!event) return;
+  const getUpcomingEvents = () =>
+    (Array.isArray(window.FD?.events) ? window.FD.events : [])
+      .filter(
+        (event) =>
+          event.title &&
+          event.slug &&
+          !/(?:\btest\b|do not buy)/i.test(event.title) &&
+          Number.isFinite(Date.parse(event.startAt)) &&
+          Date.parse(event.startAt) > Date.now(),
+      )
+      .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt));
 
-      nextEvent = event;
-      ticketLink.href = `/events/${encodeURIComponent(event.slug)}`;
-    })
-    .catch(() => {});
+  const publishEvents = () => {
+    const events = getUpcomingEvents();
+    window.parent.postMessage(
+      {
+        type: "nat:event-data",
+        timezone: "Africa/Lagos",
+        events: events.map(({ slug, title, startAt }) => ({
+          slug,
+          title,
+          startAt,
+          timezone: "Africa/Lagos",
+        })),
+      },
+      "*",
+    );
+    nextEvent = events[0];
+    if (nextEvent)
+      ticketLink.href = `/events/${encodeURIComponent(nextEvent.slug)}`;
+  };
+
+  window.addEventListener("message", (event) => {
+    if (event.data?.type === "nat:request-events") publishEvents();
+  });
+  publishEvents();
 }
 ```

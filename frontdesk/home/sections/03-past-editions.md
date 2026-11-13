@@ -146,5 +146,76 @@
 ```
 
 ```js
+const list = document.querySelector("[data-upcoming-event-list]");
+const getUpcomingEvents = () =>
+  (Array.isArray(window.FD?.events) ? window.FD.events : [])
+    .filter(
+      (event) =>
+        event.title &&
+        event.slug &&
+        !/(?:\btest\b|do not buy)/i.test(event.title) &&
+        Number.isFinite(Date.parse(event.startAt)) &&
+        Date.parse(event.startAt) > Date.now(),
+    )
+    .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt));
 
+const publishEvents = () => {
+  const events = getUpcomingEvents();
+  window.parent.postMessage(
+    {
+      type: "nat:event-data",
+      timezone: "Africa/Lagos",
+      events: events.map(({ slug, title, startAt }) => ({
+        slug,
+        title,
+        startAt,
+        timezone: "Africa/Lagos",
+      })),
+    },
+    "*",
+  );
+  if (!list) return;
+  list.replaceChildren();
+  if (!events.length) {
+    const empty = document.createElement("li");
+    empty.className = "nat-events__empty";
+    empty.textContent = "No upcoming events announced yet.";
+    list.append(empty);
+    return;
+  }
+  events.forEach((event) => {
+    const item = document.createElement("li");
+    const link = document.createElement("a");
+    link.className = "nat-events__row nat-events__row--upcoming";
+    link.href = `/events/${encodeURIComponent(event.slug)}`;
+    link.addEventListener("click", (click) => {
+      click.preventDefault();
+      window.parent.postMessage(
+        { type: "nat:open-event", slug: event.slug, title: event.title },
+        "*",
+      );
+    });
+    const date = document.createElement("time");
+    date.dateTime = event.startAt;
+    date.textContent = new Intl.DateTimeFormat("en-NG", {
+      weekday: "short",
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      timeZone: "Africa/Lagos",
+    }).format(new Date(event.startAt));
+    const title = document.createElement("strong");
+    title.textContent = event.title;
+    const action = document.createElement("span");
+    action.textContent = "View event";
+    link.append(date, title, action);
+    item.append(link);
+    list.append(item);
+  });
+};
+
+window.addEventListener("message", (event) => {
+  if (event.data?.type === "nat:request-events") publishEvents();
+});
+publishEvents();
 ```
