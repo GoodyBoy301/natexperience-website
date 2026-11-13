@@ -13,7 +13,7 @@
   <div class="nat-hero__content">
     <h1 id="nat-hero-title">Nights out for people who work all week.</h1>
     <p>
-      Lagos after-work parties for 9-to-5ers and young creatives. DJs, live
+      Lagos after-work parties for 9-to-5ers and young creatives.<br />DJs, live
       music and room to connect.
     </p>
 
@@ -150,6 +150,20 @@
 const hero = document.querySelector(".nat-hero[data-storefront-ref]");
 if (hero) {
   const ticketLink = hero.querySelector("[data-next-event-link]");
+  let nextEvent;
+
+  ticketLink.addEventListener("click", (event) => {
+    if (!nextEvent) return;
+    event.preventDefault();
+    window.parent.postMessage(
+      {
+        type: "nat:open-event",
+        slug: nextEvent.slug,
+        title: nextEvent.title,
+      },
+      "*",
+    );
+  });
 
   fetch(
     `https://api.frontdesk.africa/v1/storefront/${encodeURIComponent(hero.dataset.storefrontRef)}`,
@@ -177,6 +191,7 @@ if (hero) {
         .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt))[0];
       if (!event) return;
 
+      nextEvent = event;
       ticketLink.href = `/events/${encodeURIComponent(event.slug)}`;
     })
     .catch(() => {});

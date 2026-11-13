@@ -144,6 +144,19 @@ if (section) {
   const countdown = section.querySelector(".nat-countdown");
   const name = section.querySelector("#nat-next-title");
   const link = section.querySelector("a");
+  link.addEventListener("click", (event) => {
+    if (!link.href || link.hidden) return;
+    event.preventDefault();
+    window.parent.postMessage(
+      {
+        type: "nat:open-event",
+        slug: new URL(link.href).pathname.split("/").filter(Boolean).at(-1),
+        title: name.textContent.replace(/^UNTIL /, ""),
+      },
+      "*",
+    );
+  });
+
   const update = () => {
     const remaining = Math.max(
       0,

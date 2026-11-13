@@ -248,6 +248,66 @@
     });
   };
 
+  const eventDrawer = document.querySelector("#nat-event-drawer");
+  const eventFrame = eventDrawer?.querySelector("iframe");
+  const eventTitle = eventDrawer?.querySelector("#nat-event-drawer-title");
+  const eventFallback = eventDrawer?.querySelector(
+    ".nat-event-drawer__fallback",
+  );
+  let eventOpener;
+
+  const openEventDrawer = (slug, title, opener) => {
+    if (!eventDrawer || !eventFrame || !/^[a-z0-9-]+$/i.test(slug)) return;
+    const url = new URL(`/events/${encodeURIComponent(slug)}`, location.origin);
+    eventOpener = opener || document.activeElement;
+    eventTitle.textContent = title || "Event details";
+    eventFallback.href = url.href;
+    eventFrame.src = url.href;
+    if (!eventDrawer.open) eventDrawer.showModal();
+  };
+
+  document.addEventListener("click", (event) => {
+    const link = event.target.closest?.('a[href*="/events/"]');
+    if (!link || link.target === "_blank") return;
+    const url = new URL(link.href, location.href);
+    if (url.origin !== location.origin) return;
+    const slug = url.pathname.match(new RegExp("^/events/([^/]+)"))?.[1];
+    if (!slug) return;
+    event.preventDefault();
+    openEventDrawer(decodeURIComponent(slug), link.textContent.trim(), link);
+  });
+
+  window.addEventListener("message", (event) => {
+    if (
+      ![...document.querySelectorAll("iframe")].some(
+        (frame) => frame.contentWindow === event.source,
+      )
+    )
+      return;
+    const data = event.data;
+    if (
+      !data ||
+      data.type !== "nat:open-event" ||
+      typeof data.slug !== "string"
+    )
+      return;
+    if (typeof data.title !== "string") return;
+    openEventDrawer(data.slug, data.title.slice(0, 200));
+  });
+
+  eventDrawer
+    ?.querySelector("[data-event-drawer-close]")
+    ?.addEventListener("click", () => {
+      eventDrawer.close();
+    });
+  eventDrawer?.addEventListener("click", (event) => {
+    if (event.target === eventDrawer) eventDrawer.close();
+  });
+  eventDrawer?.addEventListener("close", () => {
+    eventFrame.src = "about:blank";
+    eventOpener?.focus();
+  });
+
   const loadNextEvent = async () => {
     const section = document.querySelector(".nat-next[data-storefront-ref]");
     const hero = document.querySelector(".nat-hero[data-storefront-ref]");
@@ -370,7 +430,7 @@
       "Book an experience or get in touch about a private event.",
     );
 
-    setCopy("footer.brandText", "NATExperience");
+    setCopy("footer.brandText", "N.A.TExperience");
     setCopy(
       "footer.tagline",
       "Lagos parties, live shows and event management.",
@@ -402,10 +462,7 @@
         <div class="nat-events__group">
           <h3>Past</h3>
           <ol class="nat-events__list">
-            <li><a class="nat-events__row nat-events__row--past" href="https://www.youtube.com/results?search_query=NATExperience+Hysteria+Y2K+Party" target="_blank" rel="noreferrer"><time datetime="2025-11-15">Sat, 15 Nov 2025</time><strong>Hysteria Y2K Party</strong><span>Watch on YouTube</span></a></li>
-            <li><a class="nat-events__row nat-events__row--past" href="https://www.youtube.com/results?search_query=NATExperience+9-5+Block+Party" target="_blank" rel="noreferrer"><time datetime="2025-08-23">Sat, 23 Aug 2025</time><strong>9–5 Block Party</strong><span>Watch on YouTube</span></a></li>
-            <li><a class="nat-events__row nat-events__row--past" href="https://www.youtube.com/results?search_query=NATExperience+Eko+for+Show" target="_blank" rel="noreferrer"><time datetime="2025-05-17">Sat, 17 May 2025</time><strong>Eko for Show</strong><span>Watch on YouTube</span></a></li>
-            <li><a class="nat-events__row nat-events__row--past" href="https://www.youtube.com/results?search_query=NATExperience+Poolside+Party" target="_blank" rel="noreferrer"><time datetime="2025-02-08">Sat, 08 Feb 2025</time><strong>Poolside Sessions</strong><span>Watch on YouTube</span></a></li>
+            <li><a class="nat-events__row nat-events__row--past" href="https://www.youtube.com/channel/UCJqL2utf4_qrIGi4zscI88w/videos" target="_blank" rel="noopener noreferrer"><strong>Browse past editions on YouTube</strong><span>Watch videos</span></a></li>
           </ol>
         </div>
       </section>

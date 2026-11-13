@@ -26,47 +26,12 @@
         </div>
       </div>
     </div>
-    <div class="nat-nav-item">
-      <button type="button" aria-expanded="false" aria-controls="nat-menu-past">
-        PAST EDITIONS
-      </button>
-      <div class="nat-nav-menu" id="nat-menu-past" aria-hidden="true" inert>
-        <div class="nat-nav-menu__inner nat-nav-menu__inner--past">
-          <a
-            class="nat-past-event-row"
-            href="https://www.youtube.com/results?search_query=NATExperience+Hysteria+Y2K+Party"
-            target="_blank"
-            rel="noreferrer"
-            ><time datetime="2025-11-15">Sat, 15 Nov 2025</time
-            ><strong>Hysteria Y2K Party</strong><span>Watch on YouTube</span></a
-          >
-          <a
-            class="nat-past-event-row"
-            href="https://www.youtube.com/results?search_query=NATExperience+9-5+Block+Party"
-            target="_blank"
-            rel="noreferrer"
-            ><time datetime="2025-08-23">Sat, 23 Aug 2025</time
-            ><strong>9–5 Block Party</strong><span>Watch on YouTube</span></a
-          >
-          <a
-            class="nat-past-event-row"
-            href="https://www.youtube.com/results?search_query=NATExperience+Eko+for+Show"
-            target="_blank"
-            rel="noreferrer"
-            ><time datetime="2025-05-17">Sat, 17 May 2025</time
-            ><strong>Eko for Show</strong><span>Watch on YouTube</span></a
-          >
-          <a
-            class="nat-past-event-row"
-            href="https://www.youtube.com/results?search_query=NATExperience+Poolside+Party"
-            target="_blank"
-            rel="noreferrer"
-            ><time datetime="2025-02-08">Sat, 08 Feb 2025</time
-            ><strong>Poolside Sessions</strong><span>Watch on YouTube</span></a
-          >
-        </div>
-      </div>
-    </div>
+    <a
+      href="https://www.youtube.com/channel/UCJqL2utf4_qrIGi4zscI88w/videos"
+      target="_blank"
+      rel="noopener noreferrer"
+      >PAST EDITIONS</a
+    >
   </nav>
   <a class="nat-custom-header__brand" href="/" aria-label="NATExperience home"
     ><img
@@ -177,16 +142,47 @@
   <div class="nat-custom-footer__kicker" aria-hidden="true">THE</div>
   <div
     class="nat-custom-footer__wordmark"
-    aria-label="The NATExperience"
-    data-wordmark="NATEXPERIENCE"
+    aria-label="The N.A.T Experience"
+    data-wordmark="N.A.TEXPERIENCE"
   >
-    NATEXPERIENCE
+    N.A.TEXPERIENCE
   </div>
   <p class="nat-custom-footer__copyright">
     © 2026. N.A.T your average night out.
   </p>
 </footer>
-<script src="https://natexperience-assets.goodyboy-work.workers.dev/site-menu-close.js?v=20261113-nav100"></script>
+<dialog
+  class="nat-event-drawer"
+  id="nat-event-drawer"
+  aria-labelledby="nat-event-drawer-title"
+>
+  <div class="nat-event-drawer__panel">
+    <header class="nat-event-drawer__header">
+      <h2 id="nat-event-drawer-title">Event details</h2>
+      <button
+        type="button"
+        data-event-drawer-close
+        aria-label="Close event details"
+      >
+        Close
+      </button>
+    </header>
+    <iframe
+      title="Event details"
+      src="about:blank"
+      allow="payment"
+      loading="eager"
+    ></iframe>
+    <a
+      class="nat-event-drawer__fallback"
+      href="/events"
+      target="_blank"
+      rel="noopener noreferrer"
+      >Open event page</a
+    >
+  </div>
+</dialog>
+<script src="https://natexperience-assets.goodyboy-work.workers.dev/site-menu-close.js?v=20261113-footer-brand-dots"></script>
 <script
   src="https://natexperience-assets.goodyboy-work.workers.dev/devtools.js"
   defer

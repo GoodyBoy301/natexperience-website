@@ -19,41 +19,11 @@
       <li>
         <a
           class="nat-events__row nat-events__row--past"
-          href="https://www.youtube.com/results?search_query=NATExperience+Hysteria+Y2K+Party"
+          href="https://www.youtube.com/channel/UCJqL2utf4_qrIGi4zscI88w/videos"
           target="_blank"
-          rel="noreferrer"
-          ><time datetime="2025-11-15">Sat, 15 Nov 2025</time
-          ><strong>Hysteria Y2K Party</strong><span>Watch on YouTube</span></a
-        >
-      </li>
-      <li>
-        <a
-          class="nat-events__row nat-events__row--past"
-          href="https://www.youtube.com/results?search_query=NATExperience+9-5+Block+Party"
-          target="_blank"
-          rel="noreferrer"
-          ><time datetime="2025-08-23">Sat, 23 Aug 2025</time
-          ><strong>9–5 Block Party</strong><span>Watch on YouTube</span></a
-        >
-      </li>
-      <li>
-        <a
-          class="nat-events__row nat-events__row--past"
-          href="https://www.youtube.com/results?search_query=NATExperience+Eko+for+Show"
-          target="_blank"
-          rel="noreferrer"
-          ><time datetime="2025-05-17">Sat, 17 May 2025</time
-          ><strong>Eko for Show</strong><span>Watch on YouTube</span></a
-        >
-      </li>
-      <li>
-        <a
-          class="nat-events__row nat-events__row--past"
-          href="https://www.youtube.com/results?search_query=NATExperience+Poolside+Party"
-          target="_blank"
-          rel="noreferrer"
-          ><time datetime="2025-02-08">Sat, 08 Feb 2025</time
-          ><strong>Poolside Sessions</strong><span>Watch on YouTube</span></a
+          rel="noopener noreferrer"
+          ><strong>Browse past editions on YouTube</strong
+          ><span>Watch videos</span></a
         >
       </li>
     </ol>
