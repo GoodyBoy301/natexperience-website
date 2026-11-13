@@ -478,19 +478,21 @@ body.nat-site {
 }
 
 .nat-custom-footer__kicker {
-  margin-bottom: 14px;
-  font-size: clamp(3rem, 8vw, 7rem);
-  font-weight: 900;
-  line-height: 0.85;
+  margin-bottom: 20px;
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.18em;
 }
 
 .nat-custom-footer__wordmark {
   position: relative;
+  max-width: 100%;
   white-space: nowrap;
-  font-size: clamp(2rem, 12.5vw, 12rem);
+  font-size: clamp(2rem, 8vw, 7rem);
   font-weight: 800;
-  line-height: 0.82;
-  letter-spacing: -0.065em;
+  line-height: 0.95;
+  letter-spacing: -0.045em;
   color: #fff;
   text-align: center;
   -webkit-text-stroke: 1px #fff;

@@ -285,6 +285,20 @@
     )
       return;
     const data = event.data;
+    if (data?.type === "nat:event-data" && Array.isArray(data.events)) {
+      const events = data.events.filter(
+        (item) =>
+          item &&
+          typeof item.slug === "string" &&
+          /^[a-z0-9-]+$/i.test(item.slug) &&
+          typeof item.title === "string" &&
+          Number.isFinite(Date.parse(item.startAt)) &&
+          Date.parse(item.startAt) > Date.now(),
+      );
+      renderUpcomingEvents(events, data.timezone);
+      renderEventArchive(events, data.timezone);
+      return;
+    }
     if (
       !data ||
       data.type !== "nat:open-event" ||
@@ -308,72 +322,10 @@
     eventOpener?.focus();
   });
 
-  const loadNextEvent = async () => {
-    const section = document.querySelector(".nat-next[data-storefront-ref]");
-    const hero = document.querySelector(".nat-hero[data-storefront-ref]");
-    const storefrontRef =
-      section?.dataset.storefrontRef ||
-      hero?.dataset.storefrontRef ||
-      document.querySelector(".nat-custom-header")?.dataset.storefrontRef;
-    if (
-      !storefrontRef ||
-      (section?.dataset.eventLoaded && hero?.dataset.eventLoaded)
-    )
-      return;
-
-    if (section) section.dataset.eventLoaded = "true";
-    if (hero) hero.dataset.eventLoaded = "true";
-    const countdown = section?.querySelector(".nat-countdown");
-    const name = section?.querySelector("#nat-next-title");
-    const link = section?.querySelector("a");
-
-    const heroLink = hero?.querySelector("[data-next-event-link]");
-
-    try {
-      const response = await fetch(
-        `https://api.frontdesk.africa/v1/storefront/${encodeURIComponent(storefrontRef)}`,
-        { headers: { Accept: "application/json" }, cache: "no-store" },
-      );
-      if (!response.ok) throw new Error("FrontDesk event request failed");
-
-      const payload = await response.json();
-      const { data } = payload;
-      const events = payload.events ?? data?.events;
-
-      const now = Date.now();
-      const upcomingEvents = (Array.isArray(events) ? events : [])
-        .filter(
-          (item) =>
-            item.publishedAt &&
-            item.title &&
-            item.slug &&
-            Number.isFinite(Date.parse(item.startAt)) &&
-            Date.parse(item.startAt) > now,
-        )
-        .sort((a, b) => Date.parse(a.startAt) - Date.parse(b.startAt));
-      renderUpcomingEvents(upcomingEvents, data.timezone);
-      renderEventArchive(upcomingEvents, data.timezone);
-      const event = upcomingEvents[0];
-
-      if (!event) {
-        if (name) name.textContent = "NO UPCOMING EVENT ANNOUNCED";
-        return;
-      }
-
-      const eventUrl = `/events/${encodeURIComponent(event.slug)}`;
-      if (name && countdown && link) {
-        name.textContent = `UNTIL ${event.title}`;
-        countdown.dataset.countdownTarget = event.startAt;
-        countdown.hidden = false;
-        countdown.setAttribute("aria-label", `Countdown to ${event.title}`);
-        link.href = eventUrl;
-        link.hidden = false;
-        updateCountdowns();
-      }
-      if (heroLink) heroLink.href = eventUrl;
-    } catch {
-      if (name) name.textContent = "EVENT DETAILS UNAVAILABLE";
-    }
+  const loadNextEvent = () => {
+    document.querySelectorAll("iframe").forEach((frame) => {
+      frame.contentWindow?.postMessage({ type: "nat:request-events" }, "*");
+    });
   };
 
   updateCountdowns();
@@ -430,7 +382,7 @@
       "Book an experience or get in touch about a private event.",
     );
 
-    setCopy("footer.brandText", "N.A.TExperience");
+    setCopy("footer.brandText", "N.A.T Experience");
     setCopy(
       "footer.tagline",
       "Lagos parties, live shows and event management.",
