@@ -27,6 +27,21 @@
 
   observeShell();
 
+  document.addEventListener(
+    "toggle",
+    (event) => {
+      const opened = event.target;
+      if (!opened.matches?.(".nat-faq-card[open]")) return;
+      opened
+        .closest(".nat-faq-column")
+        ?.querySelectorAll(".nat-faq-card[open]")
+        .forEach((card) => {
+          if (card !== opened) card.open = false;
+        });
+    },
+    true,
+  );
+
   let menuCloseTimer;
 
   const closeMenus = (except) => {
@@ -329,6 +344,15 @@
       );
       renderUpcomingEvents(events, data.timezone);
       renderEventArchive(events, data.timezone);
+      return;
+    }
+    if (data?.type === "nat:scroll-page") {
+      window.scrollBy({
+        top: window.innerHeight,
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "auto"
+          : "smooth",
+      });
       return;
     }
     if (

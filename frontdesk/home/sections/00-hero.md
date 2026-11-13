@@ -150,7 +150,13 @@
 const hero = document.querySelector(".nat-hero[data-storefront-ref]");
 if (hero) {
   const ticketLink = hero.querySelector("[data-next-event-link]");
+  const expectLink = hero.querySelector(".nat-hero__secondary");
   let nextEvent;
+
+  expectLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.parent.postMessage({ type: "nat:scroll-page" }, "*");
+  });
 
   ticketLink.addEventListener("click", (event) => {
     if (!nextEvent) return;

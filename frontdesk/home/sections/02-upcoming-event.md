@@ -71,7 +71,7 @@
 }
 .nat-countdown strong {
   font-family: "Oswald", "Arial Narrow", sans-serif !important;
-  font-size: 10rem;
+  font-size: 11vw;
   font-weight: 700;
   line-height: 0.95;
 }
@@ -84,7 +84,7 @@
   right: calc(clamp(10px, 2vw, 34px) / -2);
   transform: translateX(50%);
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: 10rem;
+  font-size: 11vw;
   font-weight: 700;
   line-height: 0.95;
   content: ":";
@@ -116,16 +116,7 @@
   outline: 3px solid #fff;
   outline-offset: 4px;
 }
-@media (min-width: 801px) {
-  html {
-    font-size: clamp(11.2px, 1.1vw, 16px);
-  }
-}
-
 @media (max-width: 800px) {
-  html {
-    font-size: 16px;
-  }
   .nat-next {
     min-height: max(100svh, 680px);
     padding-inline: 7%;

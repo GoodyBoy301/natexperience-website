@@ -873,10 +873,8 @@ body.nat-site {
 
 .nat-newsletter {
   display: flex;
-  height: 368px;
   min-height: 0;
   flex-direction: column;
-  align-self: start;
   margin-top: calc(clamp(2rem, 3.5vw, 3rem) + 60px);
   padding: clamp(24px, 3vw, 40px);
   border-radius: 9px;
@@ -1061,7 +1059,7 @@ body.nat-site {
 
 .nat-countdown strong {
   font-family: "Oswald", "Arial Narrow", sans-serif !important;
-  font-size: clamp(4rem, 11vw, 10rem);
+  font-size: 11vw;
   font-weight: 700;
   line-height: 0.95;
 }
@@ -1076,7 +1074,7 @@ body.nat-site {
   right: calc(clamp(10px, 2vw, 34px) / -2);
   transform: translateX(50%);
   font-family: "Oswald", "Arial Narrow", sans-serif;
-  font-size: clamp(4rem, 11vw, 10rem);
+  font-size: 11vw;
   font-weight: 700;
   line-height: 0.95;
   content: ":";
@@ -1574,6 +1572,11 @@ body.nat-site {
   color: #fff;
 }
 
+.nat-event-drawer[open] {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .nat-event-drawer::backdrop {
   background: rgb(0 0 0 / 64%);
   backdrop-filter: blur(3px);
@@ -1585,7 +1588,7 @@ body.nat-site {
   height: 100%;
   flex-direction: column;
   background: #0d0f14;
-  box-shadow: 18px 0 60px rgb(0 0 0 / 32%);
+  box-shadow: -18px 0 60px rgb(0 0 0 / 32%);
   animation: nat-event-drawer-in 220ms ease-out both;
 }
 
@@ -1643,7 +1646,7 @@ body.nat-site {
 
 @keyframes nat-event-drawer-in {
   from {
-    transform: translateX(-100%);
+    transform: translateX(100%);
   }
   to {
     transform: translateX(0);

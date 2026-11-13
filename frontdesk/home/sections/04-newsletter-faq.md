@@ -111,9 +111,7 @@
 }
 .nat-newsletter {
   display: flex;
-  height: 340px;
   flex-direction: column;
-  align-self: start;
   margin-top: calc(clamp(2rem, 3.5vw, 3rem) + 60px);
   padding: clamp(24px, 3vw, 40px);
   border-radius: 9px;
@@ -243,5 +241,13 @@
 ```
 
 ```js
-
+const cards = [...document.querySelectorAll(".nat-faq-card")];
+cards.forEach((card) => {
+  card.addEventListener("toggle", () => {
+    if (!card.open) return;
+    cards.forEach((other) => {
+      if (other !== card) other.open = false;
+    });
+  });
+});
 ```
