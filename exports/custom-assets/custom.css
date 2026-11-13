@@ -709,6 +709,7 @@ body.nat-site {
 }
 
 .nat-events {
+  display: none;
   padding: clamp(24px, 3vw, 40px) 24px;
   background: var(--nat-black);
   color: var(--nat-white);
@@ -871,7 +872,12 @@ body.nat-site {
 }
 
 .nat-newsletter {
+  display: flex;
+  height: 368px;
+  min-height: 0;
+  flex-direction: column;
   align-self: start;
+  margin-top: calc(clamp(2rem, 3.5vw, 3rem) + 60px);
   padding: clamp(24px, 3vw, 40px);
   border-radius: 9px;
   background: #fff4a6;
@@ -891,6 +897,10 @@ body.nat-site {
   margin: 16px 0 30px;
   color: rgb(23 23 23 / 76%);
   line-height: 1.55;
+}
+
+.nat-newsletter__signup {
+  margin-top: auto;
 }
 
 .nat-newsletter__signup label {
@@ -1178,6 +1188,11 @@ body.nat-site {
     grid-template-columns: 1fr;
     padding-inline: 24px;
   }
+
+  .nat-newsletter {
+    height: auto;
+    margin-top: 0;
+  }
 }
 
 @media (max-width: 520px) {
@@ -1329,19 +1344,217 @@ body.nat-site {
 }
 
 @media (max-width: 600px) {
+  body.nat-site {
+    padding-top: 92px;
+  }
+
+  .nat-custom-header {
+    min-height: 92px;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    grid-template-rows: 42px 34px;
+    gap: 2px 8px;
+    padding: max(6px, env(safe-area-inset-top)) 14px 6px;
+  }
+
+  .nat-custom-header__brand {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: center;
+  }
+
+  .nat-custom-header__brand img {
+    width: 110px;
+  }
+
+  .nat-custom-header__nav {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    justify-content: space-between;
+    gap: clamp(10px, 3vw, 18px);
+    font-size: clamp(0.65rem, 2.5vw, 0.75rem);
+  }
+
+  .nat-custom-header__nav--right {
+    grid-column: 3;
+    justify-content: flex-end;
+  }
+
+  .nat-custom-header__nav > .nat-nav-item > button {
+    padding: 7px 0;
+    white-space: nowrap;
+  }
+
+  .nat-nav-menu {
+    inset: 92px 0 auto;
+  }
+
+  .nat-nav-menu__inner {
+    max-height: calc(100svh - 92px);
+    padding: 12px 14px 20px;
+  }
+
+  .nat-nav-menu__inner--contact {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .nat-nav-about-copy {
+    padding: 12px 8px;
+  }
+
+  .nat-social-links {
+    justify-content: flex-start;
+  }
+
   .nat-hero {
-    min-height: max(700px, calc(100svh - 72px));
+    min-height: max(600px, calc(100svh - 92px));
     width: 100vw;
     max-width: 100vw;
     border-radius: 0;
   }
 
+  .nat-hero__content {
+    width: calc(100% - 36px);
+    padding: 48px 0;
+  }
+
   .nat-hero h1 {
-    font-size: clamp(2.8rem, 12vw, 4rem);
+    font-size: clamp(2.5rem, 11vw, 4rem);
+  }
+
+  .nat-hero__content > p {
+    margin-top: 18px;
+    font-size: 1rem;
   }
 
   .nat-hero__actions {
     align-items: stretch;
     flex-direction: column;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .nat-hero__actions a {
+    min-height: 50px;
+  }
+
+  .nat-about__image {
+    width: 100%;
+    height: clamp(240px, 72vw, 420px);
+    max-height: none;
+  }
+
+  .nat-about__copy {
+    min-height: 300px;
+    padding: 28px 22px;
+  }
+
+  .nat-about .nat-about__copy h2 {
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
+  }
+
+  .nat-events {
+    padding: 36px 16px;
+  }
+
+  .nat-events h2 {
+    margin-bottom: 30px;
+    font-size: clamp(2.5rem, 12vw, 4rem) !important;
+  }
+
+  .nat-events__group + .nat-events__group {
+    margin-top: 32px;
+  }
+
+  .nat-events__group h3 {
+    margin-bottom: 14px;
+    font-size: 1.7rem !important;
+  }
+
+  .nat-events__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px 10px;
+    padding: 12px;
+  }
+
+  .nat-events__row time {
+    grid-column: 1 / -1;
+    white-space: normal;
+  }
+
+  .nat-events__row strong {
+    justify-self: start;
+    text-align: left;
+    line-height: 1.25;
+  }
+
+  .nat-events__row > span {
+    padding: 8px 9px;
+    font-size: 0.6rem;
+  }
+
+  .nat-newsletter-faq {
+    gap: 24px;
+    padding: 32px 16px;
+  }
+
+  .nat-newsletter {
+    height: auto;
+    margin-top: 0;
+    padding: 24px 20px;
+  }
+
+  .nat-newsletter__controls {
+    grid-template-columns: 1fr;
+  }
+
+  .nat-newsletter__controls button {
+    min-height: 48px;
+  }
+
+  .nat-faq-card summary {
+    padding: 16px;
+    font-size: 0.95rem;
+  }
+
+  .nat-faq-card p {
+    padding: 0 16px 16px;
+  }
+
+  .nat-next {
+    min-height: max(620px, 90svh);
+    padding: 100px 20px 72px;
+  }
+
+  .nat-countdown {
+    gap: 28px 10px;
+    padding-bottom: 26px;
+  }
+
+  .nat-countdown strong {
+    font-size: clamp(3rem, 17vw, 5rem);
+  }
+
+  .nat-countdown > div:not(:last-child)::after {
+    font-size: clamp(3rem, 16vw, 5rem);
+  }
+
+  .nat-custom-footer {
+    padding: 40px 16px 24px;
+  }
+
+  .nat-custom-footer__wordmark {
+    font-size: clamp(2rem, 10vw, 3.5rem);
+  }
+}
+
+@media (max-width: 360px) {
+  .nat-custom-header__nav {
+    gap: 8px;
+    font-size: 0.62rem;
+  }
+
+  .nat-custom-header {
+    padding-inline: 10px;
   }
 }
