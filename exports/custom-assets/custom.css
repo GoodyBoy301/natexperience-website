@@ -1606,13 +1606,16 @@ body.nat-site {
 }
 
 .nat-event-drawer__header {
+  position: relative;
   display: flex;
   min-height: 76px;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  margin-bottom: -34px;
   padding: 16px 22px;
   border-bottom: 1px solid rgb(255 255 255 / 14%);
+  background: #08090d;
 }
 
 .nat-event-drawer__header h2 {
