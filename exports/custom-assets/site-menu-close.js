@@ -273,6 +273,9 @@
             border-radius: 8px;
             background: #50545e;
           }
+          [data-sf-part="header"] {
+            display: none !important;
+          }
         `;
         frameDocument.head.append(style);
       }

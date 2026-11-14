@@ -112,7 +112,8 @@
 .nat-newsletter {
   display: flex;
   flex-direction: column;
-  margin-top: calc(clamp(2rem, 3.5vw, 3rem) + 60px);
+  align-self: end;
+  margin-top: 0;
   padding: clamp(24px, 3vw, 40px);
   border-radius: 9px;
   background: #fff4a6;
