@@ -1,4 +1,13 @@
 (() => {
+  const showPage = () => {
+    document.fonts.ready.then(() => {
+      document.querySelector("#nat-render-gate")?.remove();
+    });
+  };
+
+  if (document.readyState === "complete") showPage();
+  else window.addEventListener("load", showPage, { once: true });
+
   const shell = {
     header: document.querySelector(".nat-custom-header")?.outerHTML,
     footer: document.querySelector(".nat-custom-footer")?.outerHTML,
@@ -41,8 +50,6 @@
     },
     true,
   );
-
-  let menuCloseTimer;
 
   const closeMenus = (except) => {
     document.querySelectorAll(".nat-nav-item.is-open").forEach((item) => {
@@ -100,26 +107,6 @@
       ?.setAttribute("aria-expanded", String(open));
   };
 
-  document.addEventListener("pointerover", (event) => {
-    if (event.pointerType === "touch") return;
-    const item = event.target.closest?.(".nat-nav-item");
-    if (!item) return;
-    window.clearTimeout(menuCloseTimer);
-    if (!item.contains(event.relatedTarget)) setMenuOpen(item, true);
-  });
-  document.addEventListener("pointerout", (event) => {
-    if (event.pointerType === "touch") return;
-    const item = event.target.closest?.(".nat-nav-item");
-    if (!item || item.contains(event.relatedTarget)) return;
-    window.clearTimeout(menuCloseTimer);
-    menuCloseTimer = window.setTimeout(() => {
-      if (!item.matches(":hover")) setMenuOpen(item, false);
-    }, 220);
-  });
-  document.addEventListener("focusin", (event) => {
-    const item = event.target.closest?.(".nat-nav-item");
-    if (item) setMenuOpen(item, true);
-  });
   document.addEventListener("focusout", (event) => {
     const item = event.target.closest?.(".nat-nav-item");
     if (item && !item.contains(event.relatedTarget)) setMenuOpen(item, false);
@@ -128,9 +115,7 @@
     const button = event.target.closest?.(".nat-nav-item > button");
     if (button) {
       const item = button.closest(".nat-nav-item");
-      const shouldOpen = window.matchMedia("(hover: hover)").matches
-        ? true
-        : button.getAttribute("aria-expanded") !== "true";
+      const shouldOpen = button.getAttribute("aria-expanded") !== "true";
       setMenuOpen(item, shouldOpen);
     } else if (!event.target.closest?.(".nat-custom-header")) {
       closeMenus();
@@ -198,7 +183,7 @@
       return;
     }
 
-    events.slice(0, 3).forEach((event) => {
+    events.forEach((event) => {
       const card = document.createElement("a");
       card.className = "nat-menu-card nat-menu-card--event";
       card.href = `/events/${encodeURIComponent(event.slug)}`;
@@ -266,9 +251,6 @@
   const eventDrawer = document.querySelector("#nat-event-drawer");
   const eventFrame = eventDrawer?.querySelector("iframe");
   const eventTitle = eventDrawer?.querySelector("#nat-event-drawer-title");
-  const eventFallback = eventDrawer?.querySelector(
-    ".nat-event-drawer__fallback",
-  );
   let eventOpener;
 
   const themeEventFrame = () => {
@@ -298,6 +280,7 @@
       }
     } catch {}
     eventFrame.classList.add("is-ready");
+    eventDrawer.classList.add("is-ready");
   };
 
   eventFrame?.addEventListener("load", themeEventFrame);
@@ -307,8 +290,8 @@
     const url = new URL(`/events/${encodeURIComponent(slug)}`, location.origin);
     eventOpener = opener || document.activeElement;
     eventTitle.textContent = title || "Event details";
-    eventFallback.href = url.href;
     eventFrame.classList.remove("is-ready");
+    eventDrawer.classList.remove("is-ready");
     eventFrame.src = url.href;
     if (!eventDrawer.open) eventDrawer.showModal();
   };
@@ -321,7 +304,8 @@
     const slug = url.pathname.match(new RegExp("^/events/([^/]+)"))?.[1];
     if (!slug) return;
     event.preventDefault();
-    openEventDrawer(decodeURIComponent(slug), link.textContent.trim(), link);
+    const title = link.querySelector("strong")?.textContent.trim();
+    openEventDrawer(decodeURIComponent(slug), title || "Event details", link);
   });
 
   window.addEventListener("message", (event) => {
@@ -375,6 +359,7 @@
   });
   eventDrawer?.addEventListener("close", () => {
     eventFrame.classList.remove("is-ready");
+    eventDrawer.classList.remove("is-ready");
     eventFrame.src = "about:blank";
     eventOpener?.focus();
   });

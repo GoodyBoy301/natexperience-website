@@ -266,6 +266,11 @@ body.nat-site {
   gap: 8px;
 }
 
+.nat-nav-menu__inner--events {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 .nat-custom-header__nav .nat-nav-menu a.nat-past-event-row {
   display: grid;
   box-sizing: border-box;
@@ -1612,8 +1617,7 @@ body.nat-site {
   white-space: nowrap;
 }
 
-.nat-event-drawer__header button,
-.nat-event-drawer__fallback {
+.nat-event-drawer__header button {
   border: 1px solid rgb(255 255 255 / 42%);
   background: transparent;
   color: #fff;
@@ -1625,6 +1629,18 @@ body.nat-site {
   min-height: 40px;
   padding: 0 14px;
   cursor: pointer;
+}
+
+.nat-event-drawer__loading {
+  display: grid;
+  flex: 1;
+  place-items: center;
+  margin: 0;
+  color: #b8bac2;
+}
+
+.nat-event-drawer.is-ready .nat-event-drawer__loading {
+  display: none;
 }
 
 .nat-event-drawer iframe {
@@ -1639,11 +1655,6 @@ body.nat-site {
 
 .nat-event-drawer iframe.is-ready {
   visibility: visible;
-}
-
-.nat-event-drawer__fallback {
-  padding: 14px 20px;
-  text-align: center;
 }
 
 @keyframes nat-event-drawer-in {
