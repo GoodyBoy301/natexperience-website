@@ -177,7 +177,6 @@ if (hero) {
         (event) =>
           event.title &&
           event.slug &&
-          !/(?:\btest\b|do not buy)/i.test(event.title) &&
           Number.isFinite(Date.parse(event.startAt)) &&
           Date.parse(event.startAt) > Date.now(),
       )

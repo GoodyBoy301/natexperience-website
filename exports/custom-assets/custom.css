@@ -269,6 +269,11 @@ body.nat-site {
 .nat-nav-menu__inner--events {
   overflow-y: auto;
   overscroll-behavior: contain;
+  scrollbar-width: none;
+}
+
+.nat-nav-menu__inner--events::-webkit-scrollbar {
+  display: none;
 }
 
 .nat-custom-header__nav .nat-nav-menu a.nat-past-event-row {
