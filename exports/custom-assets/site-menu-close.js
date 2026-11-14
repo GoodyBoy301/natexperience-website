@@ -1,12 +1,10 @@
 (() => {
-  const showPage = () => {
-    document.fonts.ready.then(() => {
-      document.querySelector("#nat-render-gate")?.remove();
-    });
+  const revealPage = () => {
+    document.querySelector("#nat-render-gate")?.remove();
   };
 
-  if (document.readyState === "complete") showPage();
-  else window.addEventListener("load", showPage, { once: true });
+  if (document.readyState === "complete") revealPage();
+  else window.addEventListener("load", revealPage, { once: true });
 
   const shell = {
     header: document.querySelector(".nat-custom-header")?.outerHTML,
