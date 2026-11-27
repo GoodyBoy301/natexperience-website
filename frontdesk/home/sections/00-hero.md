@@ -2,33 +2,53 @@
 <section
   class="nat-hero"
   data-storefront-ref="01a1cf12-cd3f-72b5-b752-ea33209a16b8"
-  aria-labelledby="nat-hero-title"
+  aria-label="Zodiac Party"
 >
-  <img
-    class="nat-hero__image"
-    src="https://natexperience-assets.goodyboy-work.workers.dev/hero-party.jpg"
-    alt=""
-    aria-hidden="true"
-  />
   <div class="nat-hero__content">
-    <h1 id="nat-hero-title">Nights out for people who work all week.</h1>
-    <p>
-      Lagos after-work parties for 9-to-5ers and young creatives.<br />DJs, live
-      music and room to connect.
+    <p id="nat-hero-copy">
+      Lagos’ monthly <strong>Afro EDM Glow in The Dark Rave</strong>. Each
+      edition celebrates its zodiac sign. December is
+      <strong>Project Sagittarius</strong>: two nights, one universe, curated by
+      Maze x Mxtreme at TRIB3 Lagos. Come rave now.
     </p>
-
-    <div class="nat-hero__actions">
-      <a class="nat-hero__primary" data-next-event-link href="#next-event"
-        >Get tickets</a
-      >
-      <a class="nat-hero__secondary" href="#about">What to expect</a>
+    <div class="nat-hero__equalizer" aria-hidden="true">
+      <span></span><span></span><span></span><span></span> <span></span
+      ><span></span><span></span><span></span>
     </div>
+  </div>
+  <div class="nat-hero__media">
+    <video
+      class="nat-hero__video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="metadata"
+      poster="https://natexperience-assets.goodyboy-work.workers.dev/zodiac-party-hero-poster.jpg"
+      aria-hidden="true"
+    >
+      <source
+        src="https://natexperience-assets.goodyboy-work.workers.dev/zodiac-party-hero.mp4"
+        type="video/mp4"
+      />
+    </video>
   </div>
 </section>
 ```
 
 ```css
-@import url("https://fonts.cdnfonts.com/css/helvetica-neue-55");
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@400;500&family=Sora:wght@400;500&display=swap");
+
+:root {
+  font-size: max(50%, calc(100vw / 1512 * 10));
+}
+
+@media (max-width: 800px) {
+  :root {
+    font-size: 62.5%;
+  }
+}
+
 .nat-hero,
 .nat-hero * {
   box-sizing: border-box;
@@ -36,140 +56,174 @@
 .nat-hero {
   position: relative;
   display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
   left: 50%;
   width: 100vw;
   max-width: 100vw;
-  height: 100%;
+  height: 100vh;
+  height: 100svh;
+  min-height: 0;
   transform: translateX(-50%);
-  place-items: center;
   overflow: hidden;
-  margin: 0;
-  border-radius: 0;
-  background: #090a0d;
-  color: #fff;
-  font-family: "Helvetica Neue", sans-serif;
-  text-align: center;
-}
-.nat-hero__image,
-.nat-hero::after {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.nat-hero__image {
-  object-fit: cover;
-  filter: brightness(0.42) saturate(0.78);
-}
-.nat-hero::after {
-  background: linear-gradient(
-    90deg,
-    rgb(0 0 0 / 42%),
-    rgb(0 0 0 / 22%) 52%,
-    rgb(0 0 0 / 38%)
-  );
-  content: "";
+  margin: -8rem 0 0;
+  background: #0d0f14;
+  color: #f2f0ed;
+  font-family: "Outfit", sans-serif;
+  text-align: left;
 }
 .nat-hero__content {
   position: relative;
-  z-index: 1;
-  width: min(100% - 40px, 920px);
-  padding: 64px 0;
-}
-.nat-hero h1 {
-  margin: 0;
-  font-size: clamp(3.2rem, 6.3vw, 6rem);
-  font-weight: 750;
-  line-height: 1.02;
-  letter-spacing: -0.055em;
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  padding: 9.6rem 9.6rem 17.6rem;
+  background: #0d0f14;
 }
 
 .nat-hero__content > p {
-  max-width: 620px;
-  margin: 24px auto 0;
-  color: rgb(255 255 255 / 78%);
-  font-size: clamp(1rem, 1.5vw, 1.25rem);
-  line-height: 1.55;
+  max-width: 65.8rem;
+  margin: 0;
+  color: #f2f0ed;
+  font-family: "Sora", sans-serif !important;
+  font-size: 4.34rem;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: -0.045em;
 }
 
-.nat-hero__actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 14px;
-  margin-top: 32px;
+.nat-hero__equalizer {
+  position: absolute;
+  inset: auto 2.4rem 0 4rem;
+  display: grid;
+  height: 8rem;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  gap: 1.2rem;
+  pointer-events: none;
 }
-.nat-hero__actions a {
-  display: inline-flex;
-  min-height: 54px;
-  align-items: center;
-  justify-content: center;
-  padding: 0 28px;
-  border: 1px solid rgb(255 255 255 / 50%);
-  border-radius: 999px;
-  color: #fff;
-  font-weight: 700;
-  text-decoration: none;
-  transition:
-    transform 160ms ease,
-    background-color 160ms ease;
+
+.nat-hero__equalizer span {
+  overflow: hidden;
 }
-.nat-hero__actions a:hover {
-  transform: translateY(-2px);
+
+.nat-hero__equalizer span::before {
+  display: block;
+  height: 100%;
+  background: repeating-linear-gradient(
+      to top,
+      #f05a9d 0 72%,
+      transparent 72% 100%
+    )
+    0 100% / 100% 25%;
+  content: "";
+  transform: translateY(var(--nat-equalizer-rest, 0%));
 }
-.nat-hero__actions .nat-hero__primary {
-  border-color: #fff;
-  background: #fff;
-  color: #111;
+
+.nat-hero__equalizer span:nth-child(2),
+.nat-hero__equalizer span:nth-child(4),
+.nat-hero__equalizer span:nth-child(5) {
+  --nat-equalizer-rest: 50%;
 }
-.nat-hero__actions .nat-hero__secondary {
-  background: rgb(0 0 0 / 24%);
+
+.nat-hero__equalizer span:nth-child(3n) {
+  --nat-equalizer-rest: 25%;
 }
-.nat-hero__actions a:focus-visible {
-  outline: 3px solid #fff;
-  outline-offset: 4px;
+
+@media (prefers-reduced-motion: no-preference) {
+  .nat-hero__equalizer span::before {
+    animation: nat-hero-equalizer 1.2s steps(1) infinite;
+  }
+
+  .nat-hero__equalizer span:nth-child(2n)::before {
+    animation-delay: -380ms;
+  }
+
+  .nat-hero__equalizer span:nth-child(3n)::before {
+    animation-delay: -710ms;
+  }
+
+  .nat-hero__equalizer span:nth-child(5n)::before {
+    animation-delay: -930ms;
+  }
+}
+
+@keyframes nat-hero-equalizer {
+  0%,
+  51% {
+    transform: translateY(50%);
+  }
+  13%,
+  64% {
+    transform: translateY(0);
+  }
+  27%,
+  79% {
+    transform: translateY(25%);
+  }
+  38%,
+  93% {
+    transform: translateY(75%);
+  }
+}
+
+.nat-hero__media {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #0d0f14;
+}
+.nat-hero__video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 @media (max-width: 600px) {
   .nat-hero {
-    min-height: max(700px, calc(100svh - 72px));
-    width: 100vw;
-    max-width: 100vw;
-    border-radius: 0;
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
   }
-  .nat-hero h1 {
-    font-size: clamp(2.8rem, 12vw, 4rem);
+  .nat-hero__content {
+    min-height: 0;
+    padding: 3.6rem 2.4rem 6.4rem;
   }
-  .nat-hero__actions {
-    align-items: stretch;
-    flex-direction: column;
+  .nat-hero__equalizer {
+    inset: auto 1.2rem 1.2rem 2.4rem;
+    height: 3.6rem;
+    gap: 0.6rem;
   }
+  .nat-hero__content > p {
+    font-size: 1.87rem;
+    line-height: 1.35;
+  }
+
+  .nat-hero__media {
+    width: 100%;
+    min-height: 0;
+  }
+}
+
+.nat-hero__content strong {
+  color: #fff;
+  font-weight: 500;
 }
 ```
 
 ```js
 const hero = document.querySelector(".nat-hero[data-storefront-ref]");
 if (hero) {
-  const ticketLink = hero.querySelector("[data-next-event-link]");
-  const expectLink = hero.querySelector(".nat-hero__secondary");
-  let nextEvent;
+  const heroVideo = hero.querySelector(".nat-hero__video");
+  const motionPreference = window.matchMedia(
+    "(prefers-reduced-motion: reduce)",
+  );
+  const syncHeroVideo = () => {
+    if (motionPreference.matches) heroVideo.pause();
+    else heroVideo.play().catch(() => {});
+  };
 
-  expectLink.addEventListener("click", (event) => {
-    event.preventDefault();
-    window.parent.postMessage({ type: "nat:scroll-page" }, "*");
-  });
-
-  ticketLink.addEventListener("click", (event) => {
-    if (!nextEvent) return;
-    event.preventDefault();
-    window.parent.postMessage(
-      {
-        type: "nat:open-event",
-        slug: nextEvent.slug,
-        title: nextEvent.title,
-      },
-      "*",
-    );
-  });
+  syncHeroVideo();
+  motionPreference.addEventListener("change", syncHeroVideo);
 
   const getUpcomingEvents = () =>
     (Array.isArray(window.FD?.events) ? window.FD.events : [])
@@ -197,9 +251,6 @@ if (hero) {
       },
       "*",
     );
-    nextEvent = events[0];
-    if (nextEvent)
-      ticketLink.href = `/events/${encodeURIComponent(nextEvent.slug)}`;
   };
 
   window.addEventListener("message", (event) => {

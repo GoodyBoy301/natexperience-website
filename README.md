@@ -12,7 +12,7 @@ Frontdesk storefront customizations and local preview tools for NATExperience. W
    bun run dev
    ```
 
-3. Open `http://localhost:8787`. Wrangler live reload is enabled.
+3. Open `http://localhost:8787`. Wrangler live reload is enabled, and edits to `frontdesk/home/sections/*.md` regenerate the local section markup automatically.
 
 The `Preview tools` button appears on local pages and reports the storefront, asset CDN, current route, viewport size, and heading count. It also reloads the preview.
 

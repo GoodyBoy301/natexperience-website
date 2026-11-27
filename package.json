@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "bun run sections:build && wrangler dev --local --port 8787 --live-reload",
+    "dev": "node scripts/dev.js",
     "sections:build": "node scripts/build-local-sections.js",
     "deploy:assets": "wrangler deploy --config wrangler.assets.toml",
     "assets:urls": "bun run scripts/list-asset-urls.js"

@@ -69,7 +69,9 @@ async function injectCustomMarkup(response, env, localOrigin) {
         `<style>${customCss}</style>`,
       )
     : "";
-  const bodyMarkup = bodyResponse.ok ? await bodyResponse.text() : "";
+  const bodyMarkup = bodyResponse.ok
+    ? rewriteAssetReferences(await bodyResponse.text(), cdnOrigin, localOrigin)
+    : "";
   const localSections = sectionsResponse.ok
     ? await sectionsResponse.text()
     : "";

@@ -8,7 +8,7 @@
 
   const shell = {
     header: document.querySelector(".nat-custom-header")?.outerHTML,
-    footer: document.querySelector(".nat-custom-footer")?.outerHTML,
+    footer: document.querySelector(".nat-custom-footer"),
   };
 
   const ensureShell = () => {
@@ -20,7 +20,7 @@
       document.body.insertAdjacentHTML("afterbegin", shell.header);
     }
     if (shell.footer && !document.querySelector(".nat-custom-footer")) {
-      document.body.insertAdjacentHTML("beforeend", shell.footer);
+      document.body.append(shell.footer);
     }
   };
 
@@ -412,6 +412,10 @@
       return;
     }
     if (!footer) return;
+    if (document.querySelector('[data-sf-section^="custom_html-"]')) {
+      if (window.__natPreviewSections?.length) renderCustomSections();
+      return;
+    }
 
     setCopy(
       "blockSections.hero.blocks.hero-headline.html",
@@ -567,12 +571,7 @@
     const slots = Array.from(
       document.querySelectorAll('[data-sf-section^="custom_html-"]'),
     );
-    const requiredSections = [
-      ".nat-about",
-      ".nat-next",
-      ".nat-events",
-      ".nat-newsletter-faq",
-    ];
+    const requiredSections = [".nat-about", ".nat-next", ".nat-events"];
     const sectionsMissing =
       requiredSections.some((selector) => !document.querySelector(selector)) ||
       (hero && !document.querySelector(".nat-hero"));

@@ -27,21 +27,6 @@
 
   observeShell();
 
-  document.addEventListener(
-    "toggle",
-    (event) => {
-      const opened = event.target;
-      if (!opened.matches?.(".nat-faq-card[open]")) return;
-      opened
-        .closest(".nat-faq-column")
-        ?.querySelectorAll(".nat-faq-card[open]")
-        .forEach((card) => {
-          if (card !== opened) card.open = false;
-        });
-    },
-    true,
-  );
-
   let menuCloseTimer;
 
   const closeMenus = (except) => {
@@ -485,7 +470,7 @@
           </ol>
         </div>
       </section>
-      <section class="nat-newsletter-faq" id="newsletter-faq" aria-label="Newsletter and frequently asked questions">
+      <section class="nat-newsletter-faq" id="newsletter-faq" aria-label="Newsletter">
         <div class="nat-newsletter">
           <h2 id="nat-newsletter-title">Stay in the loop.</h2>
           <p>Be first to hear about upcoming parties, ticket drops, and new experiences.</p>
@@ -498,15 +483,7 @@
             <p id="nat-newsletter-note">Sign-up functionality coming soon.</p>
           </div>
         </div>
-        <div class="nat-faq-column">
-          <h2 id="nat-faq-title">FAQs</h2>
-          <p class="nat-faq-intro">Dates, venues, music and tickets—what to know before you go.</p>
-          <details class="nat-faq-card"><summary>What kinds of parties does NATExperience host?</summary><p>We specialize in high-energy private group experiences like after-work 9–5 events, all-white parties, and pool parties. Every event features music, DJs, and a lively atmosphere designed to bring people together.</p></details>
-          <details class="nat-faq-card"><summary>Can I book NATExperience for a private birthday party?</summary><p>Yes, we love hosting birthdays. Our pool party setups include fun touches like floats and birthday signs, and we can tailor the vibe to your group.</p></details>
-          <details class="nat-faq-card"><summary>Do you provide a DJ and music?</summary><p>Absolutely. Music and DJs are core to every NATExperience event. We handle the sound so you can focus on enjoying the night.</p></details>
-          <details class="nat-faq-card"><summary>How much does it cost to book an event?</summary><p>Pricing depends on the event type, group size, and any custom options you want. Contact us with your party details and we will give you a tailored quote.</p></details>
-          <details class="nat-faq-card"><summary>How do I book an event with NATExperience?</summary><p>Reach out through our website or contact channels and tell us your event date, group size, and preferred vibe. We will get back to you with next steps and availability.</p></details>
-        </div>
+
       </section>
     `,
     );
@@ -581,12 +558,7 @@
     const slots = Array.from(
       document.querySelectorAll('[data-sf-section^="custom_html-"]'),
     );
-    const requiredSections = [
-      ".nat-about",
-      ".nat-next",
-      ".nat-events",
-      ".nat-newsletter-faq",
-    ];
+    const requiredSections = [".nat-about", ".nat-next", ".nat-events"];
     const sectionsMissing =
       requiredSections.some((selector) => !document.querySelector(selector)) ||
       (hero && !document.querySelector(".nat-hero"));
